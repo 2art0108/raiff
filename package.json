@@ -1,0 +1,17 @@
+{
+  "name": "softbees-prototype",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SoftBees — interactive iOS-style banking app prototype (static site, no build dependencies).",
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "dev": "node scripts/serve.mjs",
+    "check": "node scripts/build.mjs --check",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs dist"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

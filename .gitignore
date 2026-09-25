@@ -1,0 +1,19 @@
+# Build output
+dist/
+
+# Dependencies (none are required, kept for future tooling)
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Logs and env
+*.log
+npm-debug.log*
+.env
+.env.*
+.vercel

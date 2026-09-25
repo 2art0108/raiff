@@ -1,0 +1,1546 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SoftBees</title>
+<!-- Rendered by runtime/dc-lite.js via index.html -->
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+/* Large titles only: Sharp Grotesk Medium 20 */
+@font-face{font-family:"Sharp Grotesk";font-style:normal;font-weight:500;font-display:swap;src:url("assets/fonts/SharpGrotesk-Medium20.otf") format("opentype")}
+/* Inter 4.1 variable (InterVariable.woff2), single-storey a via cv11 */
+@font-face{font-family:"InterVariable";font-style:normal;font-weight:100 900;font-display:swap;src:url("assets/fonts/InterVariable.woff2") format("woff2")}
+/* RBI brand tokens — core */
+:root{
+--rbi-yellow:#FFF200;
+--rbi-black:#1A1A1A;
+--rbi-white:#FFFFFF;
+--rbi-warm-light-grey:#F5F4F0;
+--rbi-warm-grey:#E6E3DC;
+/* RBI brand tokens — greens */
+--rbi-dark-green:#163C32;
+--rbi-green:#2D6956;
+--rbi-light-green:#A9C7B7;
+--rbi-pale-green:#DDE9E2;
+/* App surface: subtle light cool grey, used by every screen */
+--app-bg:#F5F5F7;
+--radius-card:20px;
+/* Gap between repeated cards in a list (source: bank cards on Connections) */
+--gap-list:15px;
+/* Glass surface tokens (tune globally) */
+--glass-tint:rgba(255,255,255,.1);
+--glass-blur:10px;
+--glass-saturate:1.6;
+--glass-brightness:1.04;
+--glass-rim:#FFFFFF;
+--glass-rim-width:1.5px;
+--glass-sheen:rgba(255,255,255,.14);
+/* Nav bar circular buttons: barely-there outer drop shadow (outer only, never inset) */
+--nav-btn-shadow:0 3px 18px rgba(26,26,26,.065);
+--glass-shadow:0 4px 16px rgba(26,26,26,.05);
+/* Horizontal inset of page content; nav bar controls align to it */
+--page-inset:16px;
+/* Status bar (56) + nav bar (50): content starts below this and scrolls under it */
+--top-chrome:106px;
+/* Roles */
+--color-primary:var(--rbi-yellow);
+--color-on-primary:var(--rbi-black);
+--color-text:var(--rbi-black);
+--color-surface:var(--rbi-white);
+--color-background:var(--rbi-warm-light-grey);
+--color-surface-muted:var(--rbi-warm-grey);
+--color-secondary:var(--rbi-green);
+--color-secondary-strong:var(--rbi-dark-green);
+--color-secondary-soft:var(--rbi-light-green);
+--color-secondary-subtle:var(--rbi-pale-green);
+}
+body{margin:0;-webkit-font-smoothing:antialiased;font-family:'InterVariable','Inter',system-ui,sans-serif;font-feature-settings:'cv11' 1;font-style:normal;color:#1D1B20; background-color: var(--app-bg); }
+a{color:#2B2D33}
+button,input,textarea,select{font-family:inherit;font-feature-settings:inherit}
+button{cursor:pointer;-webkit-user-select:none;user-select:none}
+*{-webkit-tap-highlight-color:transparent}
+button:disabled{cursor:default}
+.icon-btn{width:48px;height:48px;flex-shrink:0;border:0;background:transparent;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1D1B20;padding:0}
+
+.icon-btn:focus-visible,.card-main:focus-visible,.nav-item:focus-visible,.day:focus-visible,.pill-btn:focus-visible,.text-btn:focus-visible,.menu-item:focus-visible{outline:2px solid #2B2D33;outline-offset:2px}
+.pill-btn{height:42px;border:0;border-radius:21px;background:#2B2D33;color:#FFFFFF;font-size:16px;font-weight:500;letter-spacing:.1px;display:flex;align-items:center;justify-content:center;gap:12px;width:100%}
+
+.card{position:relative;background:#F8F7F3;border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.18),0 1px 4px rgba(0,0,0,.06)}
+.card-main{width:100%;border:0;background:transparent;border-radius:14px;display:flex;align-items:center;gap:18px;padding:16px 56px 16px 17px;text-align:left;color:#1D1B20}
+
+.card-more{position:absolute;right:4px;top:50%;margin-top:-24px}
+.card.bank{background:#F2F3F7;box-shadow:none;border:1px solid var(--rbi-warm-grey);border-radius:20px;overflow:hidden}
+.card.bank .card-main{border-radius:0;padding:20px 24px 20px 21px;background:transparent}
+
+.card.bank .card-title{font-size:18px;font-weight:600}
+.card.bank .card-sub{color:#6B6B70}
+/* Shared bank card (Connections + Select Bank) */
+.card.bank.bank-card{flex-shrink:0;margin:0;border-radius:20px;border:0.5px solid #00000014;background:#FFFFFF;box-shadow:0 8px 32px 0 #00000014}
+.connect-btn{flex-shrink:0;margin:calc(24px - var(--gap-list)) 0 0;border:0;background:#E7E8E9;border-radius:20px;display:flex;align-items:center;gap:18px;padding:20px 24px 20px 21px;text-align:left;color:var(--rbi-black);font-size:18px;font-weight:600;letter-spacing:.15px;-webkit-tap-highlight-color:transparent}
+
+
+.connect-btn:focus-visible{outline:2px solid #2B2D33;outline-offset:2px}
+.connect-btn-icon{width:56px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+/* Shared empty state */
+.empty{flex-grow:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 32px 111px;text-align:center;transform:translateY(-16px)} /* whole group sits 16px above centre */
+.empty-icon{width:56px;height:56px;border-radius:50%;background:var(--rbi-yellow);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.empty-title{margin:16px 0 0;font-family:'Sharp Grotesk','InterVariable',system-ui,sans-serif;font-feature-settings:normal;font-size:22px;line-height:28px;font-weight:500;letter-spacing:-0.1px;color:var(--rbi-black)}
+.empty-sub{margin:6px 0 0;max-width:280px;font-size:14px;line-height:20px;color:#6B6B70}
+.empty-btn{margin-top:24px;height:48px;border:0;border-radius:16px;background:var(--rbi-black);color:#FFFFFF;display:inline-flex;align-items:center;gap:12px;padding:0 16px 0 12px;font-size:16px;font-weight:600;letter-spacing:.15px;-webkit-tap-highlight-color:transparent}
+
+
+.empty-btn:focus-visible{outline:2px solid #2B2D33;outline-offset:2px}
+/* Bank selection */
+.pick-check{width:26px;height:26px;border-radius:50%;flex-shrink:0;margin-left:auto;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1.5px solid #C7C7CC;color:#FFFFFF}
+.pick-check.on{background:var(--rbi-black);border-color:var(--rbi-black)}
+.avatar.brand{width:56px;height:56px;background:var(--rbi-yellow);overflow:hidden}
+/* ---- Liquid Glass (TEST – applied to the Settings button only) ----
+   L1 .lg-refract  geometric lens refraction: SVG displacement map (clear centre -> strong at the rim)
+   L2 .lg-surface  very translucent neutral surface + light backdrop blur / saturation
+   L3 .lg-sheen    optional, very faint internal reflection
+   L4 ::after      pure-white specular arcs (upper-left + lower-right) on the button itself, opacity 1, no filter/blend
+   L5 icon         above everything. Host has no shadow, filter or opacity (test) */
+.lglass{position:relative;isolation:isolate;border:0;background:transparent;box-shadow:none;filter:none;opacity:1}
+.lglass > span{position:absolute;inset:0;border-radius:inherit;pointer-events:none;overflow:hidden}
+.lg-refract{z-index:0;-webkit-backdrop-filter:blur(2px);backdrop-filter:url(#lg-refract)}
+.lg-surface{z-index:1;background:rgba(255,255,255,.055);-webkit-backdrop-filter:blur(1.5px) saturate(1.5) brightness(1.05);backdrop-filter:blur(1.5px) saturate(1.5) brightness(1.05)}
+.lg-sheen{z-index:2;background:radial-gradient(70% 55% at 30% 18%,rgba(255,255,255,.08) 0%,rgba(255,255,255,0) 70%)}
+.lglass::after{content:'';position:absolute;inset:0;z-index:3;border-radius:50%;pointer-events:none;opacity:1;filter:none;-webkit-backdrop-filter:none;backdrop-filter:none;mix-blend-mode:normal;
+  /* two pure-white arcs: lower-right (bottom-centre -> right, peak 105-165deg) and upper-left (left -> top-centre, peak 285-345deg); only the ends fade */
+  background:conic-gradient(from 0deg,rgba(255,255,255,0) 0deg,rgba(255,255,255,0) 75deg,#FFFFFF 105deg,#FFFFFF 165deg,rgba(255,255,255,0) 190deg,rgba(255,255,255,0) 255deg,#FFFFFF 285deg,#FFFFFF 345deg,rgba(255,255,255,0) 360deg);
+  /* show only a 2px outer ring */
+  -webkit-mask:radial-gradient(closest-side,transparent calc(100% - 2px),#000 calc(100% - 1.5px));mask:radial-gradient(closest-side,transparent calc(100% - 2px),#000 calc(100% - 1.5px))}
+/* Debug (Tweaks > Liquid glass test): same ::after layer as a solid 2px white outline */
+.lglass.hl-debug::after{background:#FFFFFF}
+.lglass > svg{position:relative;z-index:4}
+
+.lg-defs filter{color-interpolation-filters:sRGB}
+/* ---- Glass Surface: three independent layers ----
+   1. surface  (.glass)          nearly clear neutral fill + backdrop blur/saturation/brightness
+   2. sheen    (.glass::before)  very subtle internal reflection, upper-left
+   3. edge     (.glass::after)   pure-white directional rim (strong upper-left + lower-right), masked to the
+                                 border ring only, so it never tints the fill */
+.glass{position:relative;isolation:isolate;border:0;background:var(--glass-tint);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));box-shadow:var(--glass-shadow)}
+.glass::before{content:'';position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;background:radial-gradient(90% 70% at 25% 12%,var(--glass-sheen) 0%,rgba(255,255,255,0) 60%)}
+.glass::after{content:'';position:absolute;inset:0;z-index:2;border-radius:inherit;padding:var(--glass-rim-width);box-sizing:border-box;pointer-events:none;background:linear-gradient(135deg,var(--glass-rim) 0%,rgba(255,255,255,.85) 14%,rgba(255,255,255,.22) 30%,rgba(255,255,255,0) 42%,rgba(255,255,255,0) 58%,rgba(255,255,255,.22) 70%,rgba(255,255,255,.85) 86%,var(--glass-rim) 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.glass > *{position:relative;z-index:1}
+/* Tab bar: no outer shadow; the glass itself separates it */
+.tabbar.glass{box-shadow:var(--nav-btn-shadow)}
+.tabbar.glass > .tab-sel{position:absolute;z-index:1}
+/* Dark glass (AI button): black base, faint top-left sheen, dim directional rim, minimal shadow */
+.glass.glass--dark{background:var(--rbi-black);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.glass.glass--dark::after{opacity:.45}
+.glass.glass--dark::before{content:'';position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;background:radial-gradient(120% 90% at 28% 8%,rgba(255,255,255,.2) 0%,rgba(255,255,255,.06) 38%,rgba(255,255,255,0) 60%),radial-gradient(90% 70% at 78% 100%,rgba(255,255,255,.07) 0%,rgba(255,255,255,0) 60%)}
+/* Bottom scroll-edge behind the tab bar: fades from the page colour at the bottom to clear above */
+.bottom-fx{position:absolute;left:0;right:0;bottom:0;height:128px;z-index:2;pointer-events:none;transition:opacity .25s ease}
+.bottom-fx::before{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(245,245,247,.62) 0%,rgba(245,245,247,.5) 30%,rgba(245,245,247,.24) 62%,rgba(245,245,247,0) 100%)}
+.bottom-fx::after{content:'';position:absolute;inset:0;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-mask-image:linear-gradient(0deg,#000 0%,#000 30%,transparent 90%);mask-image:linear-gradient(0deg,#000 0%,#000 30%,transparent 90%)}
+/* Shared navigation bar (all screens) */
+.navbar{position:absolute;top:0;left:0;right:0;z-index:4;height:var(--top-chrome);box-sizing:border-box;padding:56px var(--page-inset) 0;display:flex;align-items:center;gap:12px;background:transparent;isolation:isolate}
+/* Soft scroll-edge: solid under the status bar, fading to fully transparent at the bottom. No divider */
+/* Top scroll-edge (mirrors the tab-bar .bottom-fx): progressive blur behind a colour gradient,
+   both confined to the status bar + nav bar area (106px).
+   Gradient: page colour 100% at the top -> 0% at the bar's bottom edge, whole layer at 88% opacity. */
+.nav-bg{position:absolute;top:0;left:0;right:0;height:var(--top-chrome);z-index:2;pointer-events:none;isolation:isolate}
+.nav-bg::before{content:'';position:absolute;inset:0;z-index:1;opacity:.88;background:linear-gradient(180deg,rgba(245,245,247,1) 0%,rgba(245,245,247,.97) 45%,rgba(245,245,247,.88) 64%,rgba(245,245,247,.62) 80%,rgba(245,245,247,.3) 91%,rgba(245,245,247,0) 100%)}
+.nav-bg.overlay{display:none}
+/* Progressive blur: 11.5px through the status bar and title line, handing over to 4.3px, reaching zero at the bar's
+   bottom edge. The layer starts 60px above the screen so its own top edge is never visible (no wave artifact). */
+.nav-blur{position:absolute;left:0;right:0;top:-60px;bottom:0;z-index:0;pointer-events:none;-webkit-backdrop-filter:blur(11.5px);backdrop-filter:blur(11.5px);-webkit-mask-image:linear-gradient(180deg,#000 0px,#000 146px,transparent 162px);mask-image:linear-gradient(180deg,#000 0px,#000 146px,transparent 162px)}
+.nav-blur.b2{-webkit-backdrop-filter:blur(4.3px);backdrop-filter:blur(4.3px);-webkit-mask-image:linear-gradient(180deg,transparent 140px,#000 152px,transparent 166px);mask-image:linear-gradient(180deg,transparent 140px,#000 152px,transparent 166px)}
+.nav-title{transition:none;flex:1;min-width:0;padding-left:0;font-family:'Sharp Grotesk','InterVariable',system-ui,sans-serif;font-feature-settings:normal;font-size:17px;line-height:22px;font-weight:500;letter-spacing:-0.1px;color:var(--rbi-black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Internal screens: Back | centered title | action */
+.navbar.internal{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:12px}
+.navbar.internal .nav-title{padding-left:0;text-align:center}
+.navbar.overlay{z-index:4}
+.navbar.overlay::before{display:none}
+/* Nav bar inside the Assistant sheet stays in the sheet's own flow */
+.navbar.in-sheet{position:relative;height:50px;padding:0 var(--page-inset);z-index:3;overflow:visible}
+.navbar.in-sheet::before{display:none}
+.nav-spacer{width:44px;height:44px}
+/* fixed nav button slots */
+.navbar:not(.internal) .slot-space{display:none}
+.navbar:not(.internal) .nav-title{padding-right:56px}
+.nav-slot{position:absolute;top:59px;width:44px;height:44px;padding:0;transition:opacity .24s ease}
+.nav-slot.slot-l{left:var(--page-inset)}
+.nav-slot.slot-r{right:var(--page-inset)}
+.navbar.in-sheet .nav-slot{top:3px}
+.navbar.in-sheet .nav-slot.slot-l{left:var(--page-inset)}
+.navbar.in-sheet .nav-slot.slot-r{right:var(--page-inset)}
+.nav-slot.off{opacity:0;pointer-events:none}
+.nav-slot .slot-icon{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;transition:opacity .2s ease;pointer-events:none}
+.nav-slot .slot-icon.off{opacity:0}
+/* nav glass buttons: whiter surface, less colour bleeding through (e.g. over the yellow Bank Details header) */
+.navbar .nav-slot.glass{--glass-tint:rgba(255,255,255,.8);--glass-saturate:1.1;--glass-brightness:1.02}
+.navbar .nav-slot.lglass .lg-surface{background:rgba(255,255,255,.8)}
+.nav-circle{width:44px;height:44px;border-radius:50%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:var(--rbi-black);padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+/* Glass edge: a 1px white rim, brightest at upper-left and lower-right, fading along the other edges */
+/* Bank Details sits on the branded colour: flat white circles */
+.nav-circle:focus-visible{outline:2px solid #2B2D33;outline-offset:2px}
+/* Bank details */
+.bank-screen{position:absolute;inset:0;z-index:1;overflow-y:auto;background:var(--app-bg)}
+.brand-bg{height:260px;background:var(--rbi-yellow)}
+.bank-body{margin-top:-128px;padding:0 var(--page-inset) 64px;display:flex;flex-direction:column}
+.card.bank.bank-card.bank-hero{margin:0;border-radius:40px;min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;box-sizing:border-box}
+.bank-hero .avatar.brand{width:80px;height:80px}
+.bank-hero-name{margin:20px 0 0;font-size:24px;line-height:30px;font-weight:600;color:var(--rbi-black);text-align:center}
+.status-badge{margin-top:10px;padding:3px 10px;border-radius:100px;background:#B6F5A6;color:var(--rbi-black);font-size:12px;line-height:16px;font-weight:500;letter-spacing:.03em;text-transform:uppercase}
+.section-title{margin:24px 0 12px;padding-left:4px;font-size:18px;line-height:24px;font-weight:600;color:var(--rbi-black)}
+.section-title.cards{margin-top:20px}
+.acc-list{display:flex;flex-direction:column;gap:var(--gap-list)}
+.acc-card{flex-shrink:0;width:100%;border:0;border-radius:var(--radius-card);background:#FFFFFF;display:flex;align-items:center;gap:12px;padding:16px 20px;text-align:left;color:var(--rbi-black);-webkit-tap-highlight-color:transparent}
+
+.acc-card:focus-visible{outline:2px solid #2B2D33;outline-offset:2px}
+.topnav-btn{width:44px;height:44px;border-radius:50%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:var(--rbi-black);padding:0;-webkit-tap-highlight-color:transparent}
+.navbar .nav-circle.glass,.navbar .topnav-btn.glass,.navbar .lglass{box-shadow:var(--nav-btn-shadow)}
+/* Nav bar circular buttons: no rim, edge highlight or reflection of any kind - clean surface + outer shadow only */
+.navbar .nav-circle.glass::before,.navbar .nav-circle.glass::after,.navbar .topnav-btn.glass::before,.navbar .topnav-btn.glass::after,.navbar .lglass::before,.navbar .lglass::after,.search-close.glass::before,.search-close.glass::after{content:none;display:none}
+.navbar .lglass .lg-sheen{display:none}
+.search-close.glass{box-shadow:var(--nav-btn-shadow)}
+
+
+.topnav-btn:focus-visible{outline:2px solid #2B2D33;outline-offset:2px}
+.device-status{position:absolute;top:0;left:0;width:430px;height:56px;display:block;pointer-events:none;z-index:20}
+.device-home{position:absolute;bottom:0;left:0;width:430px;height:32px;display:block;pointer-events:none;z-index:20}
+.large-title{position:relative;z-index:3;margin:0;padding:2px var(--page-inset) 10px;font-family:'Sharp Grotesk','InterVariable',system-ui,sans-serif;font-feature-settings:normal;font-size:32px;line-height:41px;font-weight:500;letter-spacing:-0.1px;color:var(--rbi-black);-webkit-text-stroke:0.5px currentColor}
+.avatar{width:42px;height:42px;border-radius:50%;background:#FCEFA2;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#1D1B20}
+.card-title{font-size:16px;font-weight:600;letter-spacing:.15px}
+.card-sub{font-size:14px;color:#1D1B20;margin-top:4px;letter-spacing:.25px}
+.acc-main{padding-right:24px}
+.acc-balance{margin-left:auto;font-size:15px;font-weight:600;letter-spacing:.2px;white-space:nowrap}
+.tabbar{position:absolute;left:var(--page-inset);right:var(--page-inset);bottom:25px;height:62px;border-radius:31px;padding:4px;box-sizing:border-box;display:flex}
+.tab-sel{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px) / 4);border-radius:27px;background:rgba(26,26,26,.075);box-shadow:inset 0 0.5px 0 rgba(255,255,255,.6);transition:transform .42s cubic-bezier(.32,1.25,.5,1);pointer-events:none}
+.tab-sel.i0{transform:translateX(0)}
+.tab-sel.i1{transform:translateX(100%)}
+.tab-sel.i2{transform:translateX(200%)}
+.tab-sel.i3{transform:translateX(300%)}
+/* Split variant: 3-tab bar + separate AI Chat button */
+.tabbar.split{right:93px}
+.tabbar.split .tab-sel{width:calc((100% - 8px) / 3)}
+.ai-btn{position:absolute;right:var(--page-inset);bottom:25px;width:62px;height:62px;border-radius:50%;border:0;padding:0;overflow:hidden;isolation:isolate;background:var(--rbi-black);color:var(--rbi-yellow);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:opacity .25s ease}
+
+.ai-btn:focus-visible{outline:2px solid #2B2D33;outline-offset:3px}
+.ai-btn svg{position:relative;z-index:1}
+.ai-btn.glass{position:absolute}
+.composer-row.in-modal{padding-bottom:44px} /* 32px home indicator area + the same 12px gap it keeps above the keyboard */
+/* ---- Bottom navigation + Chat: independent layers ----
+   z 1  chat as a page (classic 4-tab variant)
+   z 3  tab bar, AI button (fade in place, never move)
+   z 5  dim overlay
+   z 6  chat sheet (split variant) */
+.tabbar,.ai-btn{z-index:3;transition:opacity .25s ease}
+.nav-dimmed{opacity:0;pointer-events:none}
+.sheet-dim{position:absolute;inset:0;z-index:5;border:0;padding:0;background:rgba(0,0,0,.3);cursor:default;animation:dim-in .3s ease both}
+.sheet-dim.closing{animation:dim-out .3s ease both}
+@keyframes dim-in{from{opacity:0}to{opacity:1}}
+@keyframes dim-out{from{opacity:1}to{opacity:0}}
+.chat-host{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;background:#FFFFFF;box-sizing:border-box}
+.chat-host.page{top:106px;z-index:1}
+.chat-host.sheet.opening .composer{-webkit-backdrop-filter:none;backdrop-filter:none}
+.chat-host.sheet{will-change:transform;top:58px;z-index:6;border-top-left-radius:38px;border-top-right-radius:38px;border-bottom-left-radius:0;border-bottom-right-radius:0;padding-top:13px;overflow:hidden;box-shadow:0 -10px 40px rgba(0,0,0,.12);animation:sheet-up .44s cubic-bezier(.2,.9,.25,1) both}
+.back-icon{transform:translateX(-1px)}
+/* Recent Chats: internal screen inside the chat sheet, pushed in from the right */
+.tx-row.tap{width:100%;border:0;background:transparent;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.history-list{flex-grow:1;min-height:0;overflow-y:auto;padding:12px var(--page-inset) 48px;background:var(--app-bg)}
+/* ---- Shared navigation transition ----
+   Fixed: status bar, nav bar container/background, home indicator.
+   Moving: the screen "stage" (incoming slides from the right; the one underneath moves 28% with parallax) and the nav bar
+   CONTENT (cross-fade + small slide). The same system runs the app screens and the chat sheet's internal screens. */
+.stage{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--app-bg)}
+.nav-ghost,.sheet-ghost{position:absolute;left:0;right:0;pointer-events:none}
+.nav-ghost{top:0;bottom:0}
+.nav-ghost > .stage{position:absolute;inset:0}
+.bar-ghost{position:absolute;top:0;left:0;right:0;height:var(--top-chrome);z-index:4;pointer-events:none}
+.sheet-stage{position:relative;flex-grow:1;min-height:0;display:flex;flex-direction:column;background:inherit}
+.sheet-ghost{top:63px;bottom:0}
+.sheet-ghost > .sheet-stage{position:absolute;inset:0}
+.sheet-layer{position:absolute;inset:0;flex-direction:column;display:flex;will-change:transform;backface-visibility:hidden;contain:layout paint}
+.sheet-layer.inactive{pointer-events:none}
+.chat-body{flex-grow:1;min-height:0}
+.history-layer{background:var(--app-bg)}
+.sheet-title{position:relative;display:block;height:22px}
+.sheet-title .st-text{position:absolute;left:0;right:0;top:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .29s ease-out}
+.sheet-title .st-text.off{opacity:0;transition:opacity .29s ease-out}
+.sheet-title .st-text.on{opacity:1;transition:opacity .38s ease-in-out .1s}
+/* snapshots are flat pictures of the screen: no live backdrop filters (they break/clip when moved) */
+.nav-snapshot,.nav-snapshot *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.sheet-bar-ghost{position:absolute;top:13px;left:0;right:0;height:50px;z-index:3;pointer-events:none}
+.chat-host.sheet.closing{animation:sheet-down .3s cubic-bezier(.45,0,.8,.4) both}
+.chat-host.sheet .kb.no-anim{animation:none}
+@keyframes sheet-up{from{transform:translateY(100%)}to{transform:none}}
+@keyframes sheet-down{from{transform:none}to{transform:translateY(100%)}}
+@media (prefers-reduced-motion:reduce){.chat-host.sheet,.chat-host.sheet.closing,.sheet-dim,.sheet-dim.closing{animation-duration:.01s}}
+.nav-item{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:transparent;border-radius:27px;padding:0;font-size:10px;font-weight:500;letter-spacing:.1px;color:rgba(26,26,26,.62);-webkit-tap-highlight-color:transparent;transition:color .2s}
+.nav-item svg{display:block}
+
+.nav-item.on{color:var(--rbi-black);font-weight:600}
+@media (prefers-reduced-motion:reduce){.tab-sel{transition:none}}
+.search{height:50px;border:1.5px solid #1D1B20;border-radius:25px;display:flex;align-items:center;gap:14px;padding:0 20px 0 16px;box-sizing:border-box}
+.search:focus-within{border-width:2px}
+.search input{flex:1;border:0;background:transparent;font-size:16px;letter-spacing:.4px;color:#1D1B20;outline:none;font-family:inherit;min-width:0}
+.search input::placeholder{color:#3F3C44}
+.period-btn{height:40px;border:1.5px solid #1D1B20;border-radius:9px;background:transparent;display:flex;align-items:center;gap:12px;padding:0 18px 0 12px;font-size:15px;font-weight:600;color:#1D1B20}
+
+.period-btn.active{background:#2B2D33;color:#FFFFFF;border-color:#2B2D33}
+.clear-chip{width:40px;height:40px}
+.switch{width:54px;height:34px;border-radius:17px;border:2px solid #1D1B20;background:transparent;position:relative;padding:0;flex-shrink:0}
+.switch .thumb{position:absolute;top:50%;left:6px;width:18px;height:18px;margin-top:-9px;border-radius:50%;background:#2B2D33;transition:left .15s,width .15s,height .15s,margin .15s}
+.switch.on{background:#2B2D33;border-color:#2B2D33}
+.switch.on .thumb{left:24px;width:24px;height:24px;margin-top:-12px;background:#FFFFFF}
+.txn{display:flex;align-items:center;gap:16px;padding:16px 26px 16px 17px;border-bottom:1px solid #45434A}
+.txn-title{font-size:14px;letter-spacing:.3px;line-height:20px}
+.txn-date{font-size:13px;letter-spacing:.3px;margin-top:4px;color:#1D1B20}
+.amt{margin-left:auto;font-size:12.5px;font-weight:600;letter-spacing:.3px;white-space:nowrap}
+.amt.neg{color:#C62828}
+.amt.pos{color:#2E7D32}
+.scrim{position:absolute;inset:0;z-index:4;border:0;padding:0;background:rgba(0,0,0,.45);cursor:default}
+.scrim-clear{position:absolute;inset:0;z-index:4;border:0;padding:0;background:transparent;cursor:default}
+.menu{position:absolute;z-index:5;min-width:180px;background:#FFFFFF;border-radius:20px;padding:8px 0;overflow:hidden;box-shadow:0 8px 32px 0 #00000014;display:flex;flex-direction:column}
+.menu-item{height:48px;border:0;background:transparent;text-align:left;padding:0 20px;font-size:17px;color:#1D1B20;letter-spacing:.2px}
+
+.text-btn{height:40px;border:0;background:transparent;border-radius:20px;padding:0 14px;font-size:15px;font-weight:600;color:#1D1B20;letter-spacing:.1px}
+
+.text-btn:disabled{color:#9A9892;background:transparent}
+.range-text{font-size:28px;letter-spacing:0;color:#1D1B20}
+.range-text.ph{color:#9A9892}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));row-gap:6px}
+.cell{height:46px;display:flex;align-items:center;justify-content:center}
+.cell.band{background:#EDE5BF}
+.cell.band-r{background:linear-gradient(90deg,transparent 50%,#EDE5BF 50%)}
+.cell.band-l{background:linear-gradient(90deg,#EDE5BF 50%,transparent 50%)}
+.day{width:44px;height:44px;border-radius:50%;border:0;background:transparent;font-size:15px;color:#1D1B20;padding:0}
+
+.day.today{box-shadow:inset 0 0 0 1.5px #1D1B20}
+.day.sel{background:#2B2D33;color:#FFFFFF}
+.day:disabled{color:#B3B1AB;background:transparent}
+.ofield{position:relative;flex:1;min-width:0;border:1.5px solid #1D1B20;border-radius:6px;height:58px;display:flex;box-sizing:border-box}
+.ofield:focus-within{border-width:2.5px}
+.ofield.err{border-color:#B3261E}
+.olabel{position:absolute;top:-10px;left:10px;padding:0 5px;background:#F6F5F1;font-size:12.5px;letter-spacing:.3px;color:#1D1B20}
+.ofield input{flex:1;min-width:0;border:0;background:transparent;padding:0 14px;font-size:16px;letter-spacing:.4px;color:#1D1B20;outline:none;font-family:inherit}
+.msg-row{display:flex}
+.msg-row.me{justify-content:flex-end}
+.bubble{max-width:78%;border-radius:22px;padding:12px 16px;box-sizing:border-box;background:#FFFFFF;color:#1D1B20;border:0.5px solid rgba(26,26,26,.06);box-shadow:0 8px 28px rgba(26,26,26,.08),0 1px 3px rgba(26,26,26,.05)}
+.bubble-text{font-size:17.5px;line-height:24px;white-space:pre-line;letter-spacing:.1px}
+.bubble.me{background:var(--rbi-black);color:#FFFFFF;border:0}
+.composer{flex:1;flex-shrink:0;height:50px;border-radius:25px;display:flex;align-items:center;padding:0 18px;box-sizing:border-box}
+.composer.glass,.field.glass{--glass-tint:rgba(255,255,255,.5)}
+/* ---- Chat modal glass zones: same logic as the app nav bar / tab bar ---- */
+/* top: the modal nav bar floats over the content; sheet top (0) -> nav bar bottom (13 + 50px) */
+.chat-host.sheet .navbar.in-sheet{position:absolute;top:13px;left:0;right:0;z-index:3}
+.nav-bg.sheet-nav-bg{top:0;height:63px;z-index:2}
+.nav-bg.sheet-nav-bg .nav-blur{top:-40px;-webkit-mask-image:linear-gradient(180deg,#000 0px,#000 83px,transparent 99px);mask-image:linear-gradient(180deg,#000 0px,#000 83px,transparent 99px)}
+.nav-bg.sheet-nav-bg .nav-blur.b2{-webkit-mask-image:linear-gradient(180deg,transparent 77px,#000 89px,transparent 103px);mask-image:linear-gradient(180deg,transparent 77px,#000 89px,transparent 103px)}
+.chat-thread{padding:24px var(--page-inset) 12px}
+.chat-host.sheet .chat-thread{padding-top:74px;padding-bottom:84px}
+.chat-host.sheet .history-list{padding-top:62px}
+/* bottom: the thread scrolls under the input; soft gradient + progressive blur behind it */
+.chat-host.sheet .chat-scroll{margin-bottom:-72px}
+.composer-row{position:relative;z-index:2}
+.composer-fx{position:absolute;left:0;right:0;top:-28px;bottom:0;z-index:-1;pointer-events:none}
+.composer-fx::before{content:'';position:absolute;inset:0;opacity:.88;background:linear-gradient(0deg,rgba(245,245,247,1) 0%,rgba(245,245,247,.95) 45%,rgba(245,245,247,.6) 75%,rgba(245,245,247,0) 100%)}
+.composer-fx::after{content:'';position:absolute;inset:0;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-mask-image:linear-gradient(0deg,#000 0%,#000 45%,transparent 95%);mask-image:linear-gradient(0deg,#000 0%,#000 45%,transparent 95%)}
+.chat-host.page .composer-fx{display:none}
+/* the input uses the nav-button glass: translucent white, blur, soft outer shadow, no rim */
+.composer.glass{--glass-tint:rgba(255,255,255,.8);--glass-saturate:1.1;--glass-brightness:1.02;box-shadow:var(--nav-btn-shadow)}
+.composer.glass::before,.composer.glass::after{content:none;display:none}
+.composer:focus-within{--glass-tint:rgba(255,255,255,.86)}
+.composer input{flex:1;border:0;background:transparent;font-size:18px;color:#1D1B20;outline:none;font-family:inherit;min-width:0}
+.composer input::placeholder{color:#8A8A8F}
+.composer{position:relative}
+.composer input{padding-right:40px}
+.send-wrap{position:absolute;right:7px;top:50%;width:36px;height:36px;margin-top:-18px;opacity:0;transform:scale(.6);pointer-events:none;transition:opacity .2s ease,transform .26s cubic-bezier(.3,1.3,.5,1)}
+.send-wrap.show{opacity:1;transform:none;pointer-events:auto}
+.send-btn{position:relative;width:36px;height:36px;border-radius:50%;border:0;background:var(--rbi-yellow);color:var(--rbi-black);display:flex;align-items:center;justify-content:center;padding:0}
+.send-ico{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);transition:opacity .18s ease,transform .22s ease}
+.send-ico.off{opacity:0;transform:translate(-50%,-50%) scale(.6)}
+/* simulated AI processing */
+.ai-think{display:flex;align-items:center;gap:10px;padding:6px 2px;min-height:24px}
+.ai-dots{display:flex;align-items:center;gap:3.5px;height:12px}
+.ai-dots i{width:5px;height:5px;border-radius:50%;background:#8A8A8F;animation:ai-wave 1.1s ease-in-out infinite}
+.ai-dots i:nth-child(2){animation-delay:.14s}
+.ai-dots i:nth-child(3){animation-delay:.28s}
+@keyframes ai-wave{0%,60%,100%{transform:translateY(0);opacity:.55}30%{transform:translateY(-4px);opacity:1}}
+.ai-status{position:relative;height:24px;flex:1;overflow:hidden}
+.ai-status span{position:absolute;left:0;top:0;font-size:17.5px;line-height:24px;letter-spacing:.1px;color:var(--rbi-black);white-space:nowrap}
+.ai-status .st-in-a{animation:st-in-a .38s cubic-bezier(.25,.9,.3,1) both}
+.ai-status .st-in-b{animation:st-in-b .38s cubic-bezier(.25,.9,.3,1) both}
+.ai-status .st-out-a{animation:st-out-a .38s cubic-bezier(.25,.9,.3,1) both}
+.ai-status .st-out-b{animation:st-out-b .38s cubic-bezier(.25,.9,.3,1) both}
+@keyframes st-in-a{from{transform:translateY(100%);opacity:0}to{transform:none;opacity:1}}
+@keyframes st-in-b{from{transform:translateY(100%);opacity:0}to{transform:none;opacity:1}}
+@keyframes st-out-a{from{transform:none;opacity:1}to{transform:translateY(-100%);opacity:0}}
+@keyframes st-out-b{from{transform:none;opacity:1}to{transform:translateY(-100%);opacity:0}}
+.ai-stopped{display:flex;align-items:center;gap:12px;padding:6px 2px;font-size:15px;color:#6B6B70}
+.ai-retry{height:32px;border:0;border-radius:16px;background:#E7E8E9;color:var(--rbi-black);padding:0 14px;font-size:15px;font-weight:500;font-family:inherit}
+@media (prefers-reduced-motion:reduce){.ai-dots i,.ai-status span{animation:none!important}}
+
+.composer-row{flex-shrink:0;display:flex;align-items:center;gap:12px;padding:8px var(--page-inset) 99px}
+.composer-row.above-kb{padding-bottom:12px}
+@media (prefers-reduced-motion:reduce){.send-wrap{transition:none}}
+/* Bank selection: Select All + Save Connections */
+.select-all{color:var(--rbi-black)}
+.sel-ring{width:24px;height:24px;border-radius:50%;box-sizing:border-box;border:1.5px solid #C7C7CC;display:flex;align-items:center;justify-content:center;color:#FFFFFF;transition:background .15s ease,border-color .15s ease}
+.sel-ring.on{background:var(--rbi-black);border-color:var(--rbi-black)}
+.save-bar{position:absolute;left:41px;right:41px;bottom:34px;z-index:3;display:flex;justify-content:center;pointer-events:none;opacity:0;transform:translateY(24px);transition:opacity .22s ease,transform .32s cubic-bezier(.2,.9,.3,1)}
+.save-bar.show{opacity:1;transform:none}
+.save-bar.show .save-btn{pointer-events:auto}
+.save-btn{width:100%;height:50px;border:0;border-radius:100px;background:var(--rbi-black);color:#FFFFFF;font-size:16px;font-weight:600;letter-spacing:.15px;box-shadow:0 8px 28px rgba(26,26,26,.18);-webkit-tap-highlight-color:transparent}
+
+.save-btn:focus-visible{outline:2px solid #2B2D33;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.save-bar{transition:opacity .01s}}
+/* Account details / transactions */
+.tx-page{flex-grow:1;min-height:0;overflow-y:auto;padding:calc(var(--top-chrome) + 12px) var(--page-inset) 48px;display:flex;flex-direction:column}
+.field{flex-shrink:0;height:50px;border-radius:25px;display:flex;align-items:center;gap:8px;padding:0 18px;box-sizing:border-box;color:var(--rbi-black)}
+.field:focus-within{--glass-tint:rgba(255,255,255,.62)}
+.field input{flex:1;min-width:0;border:0;background:transparent;font-size:18px;color:#1D1B20;outline:none;font-family:inherit;padding:0}
+.field input::placeholder{color:#8A8A8F;font-size:17px}
+.field input::-webkit-search-cancel-button{-webkit-appearance:none}
+/* Transactions search: compact grey button (default) -> field in the nav bar (active) */
+.search-btn{flex-shrink:0;width:100%;height:44px;border:0;border-radius:22px;background:#E7E8E9;box-shadow:none;display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:0 14px 0 calc(50% - 39px);box-sizing:border-box;color:#8A8A8F;font-size:17px;font-weight:400;letter-spacing:.1px;-webkit-tap-highlight-color:transparent}
+.search-btn.has-q{color:var(--rbi-black)}
+.search-btn.has-q svg{color:#8A8A8F}
+.search-btn.hide{visibility:hidden}
+
+.search-btn:focus-visible{outline:2px solid #2B2D33;outline-offset:2px}
+.search-btn svg,.search-layer .field svg{display:block;flex-shrink:0}
+.search-btn span{display:block;height:22px;line-height:22px;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-layer{position:absolute;left:var(--page-inset);right:var(--page-inset);top:59px;height:44px;z-index:5;display:flex;align-items:center;gap:8px;pointer-events:none}
+.search-layer .field{flex:1;min-width:0;height:44px;border-radius:22px;padding:0 14px 0 calc(50% - 39px);gap:6px;pointer-events:auto;background:#E7E8E9;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;transition:transform .28s cubic-bezier(.25,.9,.3,1),padding-left .28s cubic-bezier(.25,.9,.3,1),background-color .28s cubic-bezier(.25,.9,.3,1),box-shadow .28s cubic-bezier(.25,.9,.3,1)}
+.search-layer .field::before,.search-layer .field::after{transition:opacity .28s cubic-bezier(.25,.9,.3,1);opacity:0}
+.search-layer.on .field{padding-left:14px;background:var(--glass-tint);box-shadow:var(--glass-shadow);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness))}
+.search-layer.on .field::before,.search-layer.on .field::after{opacity:1}
+.search-layer .field svg{color:#8A8A8F;flex-shrink:0}
+.search-layer .field input{display:block;height:22px;line-height:22px;font-size:17px;padding:0;margin:0}
+.search-layer .search-close{flex-shrink:0;width:44px;height:44px;margin-right:-52px;opacity:0;transform:scale(.6);pointer-events:auto;transition:margin-right .28s cubic-bezier(.25,.9,.3,1),opacity .22s ease,transform .28s cubic-bezier(.25,.9,.3,1)}
+.search-layer.on .search-close{margin-right:0;opacity:1;transform:none}
+/* nav content (Back, title, Filter) exits/enters as ONE layer: the nav bar container itself moves, so all three share
+   exactly the same transform, timing and easing (the background gradient/blur is a separate layer and stays put) */
+.navbar.search-session{transition:transform .28s cubic-bezier(.25,.9,.3,1),opacity .22s ease}
+.navbar.searching{transform:translateY(-26px);opacity:0;pointer-events:none}
+/* transaction content follows the field: it moves up while the field rises and back down with it */
+.tx-page{transition:transform .28s cubic-bezier(.25,.9,.3,1)}
+.tx-page.search-up{transform:translateY(-59px)}
+.kb-dock{position:absolute;left:0;right:0;bottom:0;z-index:6}
+@media (prefers-reduced-motion:reduce){.search-layer .field,.search-layer .search-close,.navbar.search-session,.tx-page{transition:none}}
+.filter-row{flex-shrink:0;display:flex;align-items:center;gap:8px;margin-top:14px}
+.chip{height:36px;border:0;border-radius:100px;background:#E7E8E9;color:var(--rbi-black);display:inline-flex;align-items:center;gap:8px;padding:0 14px 0 11px;font-size:15px;font-weight:500;letter-spacing:.1px;-webkit-tap-highlight-color:transparent}
+
+.chip:focus-visible,.chip-x:focus-visible,.ios-switch:focus-visible,.tx-row:focus-visible{outline:2px solid #2B2D33;outline-offset:2px}
+.chip.active{background:var(--rbi-black);color:#FFFFFF}
+.chip-x{width:36px;height:36px;border:0;border-radius:50%;background:#E7E8E9;color:var(--rbi-black);display:flex;align-items:center;justify-content:center;padding:0}
+.pending-label{margin-left:auto;font-size:15px;font-weight:500;color:var(--rbi-black)}
+.ios-switch{position:relative;flex-shrink:0;width:51px;height:31px;border:0;border-radius:100px;background:#E3E3E8;padding:0;transition:background .2s ease}
+.ios-switch .knob{position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#FFFFFF;box-shadow:0 3px 8px rgba(0,0,0,.15),0 1px 1px rgba(0,0,0,.16);transition:transform .22s cubic-bezier(.3,.9,.4,1)}
+.ios-switch.on{background:#34C759}
+.ios-switch.on .knob{transform:translateX(20px)}
+@media (prefers-reduced-motion:reduce){.ios-switch,.ios-switch .knob{transition:none}}
+.tx-date{margin:22px 0 8px;padding-left:4px;font-size:14px;line-height:18px;font-weight:500;color:#6B6B70}
+.tx-group{flex-shrink:0;background:#FFFFFF;border-radius:var(--radius-card);overflow:hidden;box-shadow:0 1px 2px rgba(26,26,26,.03)}
+.tx-row{position:relative;display:flex;align-items:center;padding:16px 20px}
+.tx-row.divided::before{content:'';position:absolute;top:0;left:80px;right:0;height:0.5px;background:rgba(26,26,26,.1)}
+.tx-empty{padding:48px 24px;text-align:center;display:flex;flex-direction:column;gap:6px;transform:translateY(-16px)}
+/* Simulated iOS keyboard (430pt-wide iPhone proportions) */
+.kb{flex-shrink:0;position:relative;background:#E4E5EA;border-radius:26px 26px 0 0;box-shadow:none;border:0;padding:24px 7px 0;display:flex;flex-direction:column;gap:11.5px;animation:kb-in .32s cubic-bezier(.2,.9,.3,1)}
+@keyframes kb-in{from{transform:translateY(100%)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.kb{animation:none}}
+.kb-row{display:flex;gap:6.5px;justify-content:center}
+.kb-row.r2{padding:0 21px}
+.kb-key{flex:1;min-width:0;height:46px;border:0;border-radius:8.5px;background:#FFFFFF;box-shadow:none;color:#000000;font-size:22px;font-weight:400;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+
+.kb-key.mod{flex:0 0 50px}
+.kb-key.gap-l{margin-left:7px}
+.kb-key.gap-r{margin-right:7px}
+.kb-key.b48{flex:0 0 48px;font-size:18px}
+.kb-key.ret{flex:0 0 102px}
+.kb-key.sym{font-size:21px}
+.kb-bottom{height:61px;display:flex;align-items:flex-start;justify-content:space-between;padding:17px 17px 0 28px;color:#000000}
+.kb-bottom button{width:30px;height:30px;border:0;background:transparent;padding:0;color:#000000;display:flex;align-items:center;justify-content:center}
+.provider{width:100%;border:0;background:#F8F7F3;border-radius:14px;display:flex;align-items:center;gap:16px;padding:14px 16px;text-align:left;color:#1D1B20;box-shadow:0 1px 2px rgba(0,0,0,.18)}
+
+.provider:disabled{cursor:default}
+
+.noscroll::-webkit-scrollbar{width:0;height:0}
+</style>
+</helmet>
+<div ref="{{rootRef}}" style="width: 430px; height: 932px; position: relative; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box; padding-top: 0; background: var(--app-bg); color: #b3261e; font-family: 'InterVariable', 'Inter', system-ui, sans-serif; font-feature-settings: 'cv11' 1">
+
+<svg class="lg-defs" width="0" height="0" aria-hidden="true" focusable="false" style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<filter id="lg-refract" x="0" y="0" width="44" height="44" filterUnits="userSpaceOnUse">
+<feImage href="assets/images/lens-displacement.png" x="0" y="0" width="44" height="44" preserveAspectRatio="none" result="map"></feImage>
+<feGaussianBlur in="SourceGraphic" stdDeviation="0.4" result="soft"></feGaussianBlur>
+<feDisplacementMap in="soft" in2="map" scale="26" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+</filter>
+</defs>
+</svg>
+<!-- Shared navigation bar: every screen. Main tabs reveal the compact title on scroll; internal screens show it with a Back button -->
+<!-- Layers: scrolling content (0) < nav background gradient + progressive blur (2) < large title (3) < nav controls + compact title (4) -->
+<div class="nav-bg {{navCls}}" aria-hidden="true"><span class="nav-blur"></span><span class="nav-blur b2"></span></div>
+<header class="navbar {{navCls}} {{navSearchCls}}" ref="{{barRef}}">
+<!-- Fixed button slots: the circular containers never move or remount; only their icons cross-fade, or the whole
+     button fades in place when a screen has nothing in that slot. The title is the only part that travels. -->
+<span class="nav-spacer slot-space" aria-hidden="true"></span>
+<span class="nav-title {{navTitleCls}}" aria-hidden="{{navTitleHidden}}" style="opacity: {{navTitleO}}; transform: translateY({{navTitleY}}px)">{{navTitle}}</span>
+<span class="nav-spacer slot-space" aria-hidden="true"></span>
+<button class="nav-circle glass nav-slot slot-l {{leftSlotCls}}" aria-label="Back" aria-hidden="{{leftHidden}}" tabindex="{{leftTab}}" onClick="{{leftAction}}"><span class="slot-icon"><svg class="back-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></span></button>
+<button class="nav-slot slot-r {{rightBtnCls}} {{rightSlotCls}}" aria-label="{{rightLabel}}" aria-pressed="{{rightPressed}}" aria-hidden="{{rightHidden}}" tabindex="{{rightTab}}" onClick="{{rightAction}}"><span class="lg-refract"></span><span class="lg-surface"></span><span class="lg-sheen"></span>
+<span class="slot-icon {{ri.settings}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9.3951 19.3711L9.97955 20.6856C10.1533 21.0768 10.4368 21.4093 10.7958 21.6426C11.1547 21.8759 11.5737 22.0001 12.0018 22C12.4299 22.0001 12.8488 21.8759 13.2078 21.6426C13.5667 21.4093 13.8503 21.0768 14.024 20.6856L14.6084 19.3711C14.8165 18.9047 15.1664 18.5159 15.6084 18.26C16.0532 18.0034 16.5678 17.8941 17.0784 17.9478L18.5084 18.1C18.9341 18.145 19.3637 18.0656 19.7451 17.8713C20.1265 17.6771 20.4434 17.3763 20.6573 17.0056C20.8715 16.635 20.9735 16.2103 20.9511 15.7829C20.9286 15.3555 20.7825 14.9438 20.5307 14.5978L19.684 13.4344C19.3825 13.0171 19.2214 12.5148 19.224 12C19.2239 11.4866 19.3865 10.9864 19.6884 10.5711L20.5351 9.40778C20.787 9.06175 20.933 8.65007 20.9555 8.22267C20.978 7.79528 20.8759 7.37054 20.6618 7C20.4479 6.62923 20.131 6.32849 19.7496 6.13423C19.3681 5.93997 18.9386 5.86053 18.5129 5.90556L17.0829 6.05778C16.5722 6.11141 16.0577 6.00212 15.6129 5.74556C15.17 5.48825 14.82 5.09736 14.6129 4.62889L14.024 3.31444C13.8503 2.92317 13.5667 2.59072 13.2078 2.3574C12.8488 2.12408 12.4299 1.99993 12.0018 2C11.5737 1.99993 11.1547 2.12408 10.7958 2.3574C10.4368 2.59072 10.1533 2.92317 9.97955 3.31444L9.3951 4.62889C9.18803 5.09736 8.83798 5.48825 8.3951 5.74556C7.95032 6.00212 7.43577 6.11141 6.9251 6.05778L5.49066 5.90556C5.06499 5.86053 4.6354 5.93997 4.25397 6.13423C3.87255 6.32849 3.55567 6.62923 3.34177 7C3.12759 7.37054 3.02555 7.79528 3.04804 8.22267C3.07052 8.65007 3.21656 9.06175 3.46844 9.40778L4.3151 10.5711C4.61704 10.9864 4.77964 11.4866 4.77955 12C4.77964 12.5134 4.61704 13.0137 4.3151 13.4289L3.46844 14.5922C3.21656 14.9382 3.07052 15.3499 3.04804 15.7773C3.02555 16.2047 3.12759 16.6295 3.34177 17C3.55589 17.3706 3.8728 17.6712 4.25417 17.8654C4.63554 18.0596 5.06502 18.1392 5.49066 18.0944L6.92066 17.9422C7.43133 17.8886 7.94587 17.9979 8.39066 18.2544C8.83519 18.511 9.18687 18.902 9.3951 19.3711Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 15C13.6568 15 15 13.6569 15 12C15 10.3431 13.6568 9 12 9C10.3431 9 8.99998 10.3431 8.99998 12C8.99998 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+<span class="slot-icon {{ri.more}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg></span>
+<span class="slot-icon {{ri.select}}"><span class="sel-ring {{allSelectedCls}}"><sc-if value="{{allSelected}}" hint-placeholder-val="{{false}}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if></span></span>
+<span class="slot-icon {{ri.filter}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M7 12h10M10 17h4"></path></svg></span>
+</button>
+</header>
+
+<div class="bar-ghost" ref="{{barGhostRef}}" aria-hidden="true"></div>
+<div class="nav-ghost" ref="{{ghostRef}}" aria-hidden="true"></div>
+<div class="stage" ref="{{stageRef}}">
+<main style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; position: relative">
+
+<sc-if value="{{showBankList}}" hint-placeholder-val="{{true}}">
+<div class="noscroll" onScroll="{{onListScroll}}" style="flex-grow: 1; min-height: 0; overflow-y: auto; padding: var(--top-chrome) var(--page-inset) 112px; display: flex; flex-direction: column; gap: var(--gap-list); background: transparent; position: relative">
+<h1 class="large-title" style="margin: 0 calc(-1 * var(--page-inset)) -9px; flex-shrink: 0; opacity: {{largeTitleO}}; transform: translateY({{largeTitleShift}}px)">{{largeTitle}}</h1>
+<sc-for list="{{connectedBanks}}" as="b" hint-placeholder-count="1">
+<div class="card bank bank-card" style="border-radius: 20px">
+<button class="card-main" onClick="{{b.open}}">
+<span class="avatar brand"><img src="assets/images/raiffeisen-mark.svg" alt="Raiffeisen Bank logo" style="width: 56px; height: 56px; display: block; object-fit: contain"></span>
+<span style="display: flex; flex-direction: column"><span class="card-title">{{b.name}}</span><span class="card-sub">2 accounts</span></span>
+</button>
+</div>
+</sc-for>
+<button class="connect-btn" onClick="{{openSelect}}" style="padding-top: 12px; padding-bottom: 12px; justify-content: center; border-radius: 100px"><span data-dc-group="" style="box-sizing: border-box; display: flex; flex-direction: row; gap: 9px; justify-content: normal; align-items: center"><span class="connect-btn-icon" style="width: 24px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></span><span style="font-size: 16px">Connect New Bank</span></span></button>
+</div>
+</sc-if>
+
+<sc-if value="{{isSelect}}" hint-placeholder-val="{{false}}">
+<div class="noscroll" style="flex-grow: 1; min-height: 0; overflow-y: auto; padding: calc(var(--top-chrome) + 24px) var(--page-inset) 132px; display: flex; flex-direction: column; gap: var(--gap-list)">
+<sc-for list="{{bankChoices}}" as="c" hint-placeholder-count="20">
+<div class="card bank bank-card">
+<button class="card-main" aria-pressed="{{c.pressed}}" onClick="{{c.toggle}}">
+<span class="avatar brand"><img src="assets/images/raiffeisen-mark.svg" alt="" style="width: 56px; height: 56px; display: block; object-fit: contain"></span>
+<span style="display: flex; flex-direction: column; min-width: 0"><span class="card-title">{{c.name}}</span><span class="card-sub">{{c.status}}</span></span>
+<span class="pick-check {{c.checkCls}}"><sc-if value="{{c.connected}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if></span>
+</button>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{isSelect}}" hint-placeholder-val="{{false}}">
+<div class="save-bar {{saveBarCls}}" aria-hidden="{{saveHidden}}">
+<button class="save-btn" tabindex="{{saveTab}}" onClick="{{saveConnections}}">Save Connections</button>
+</div>
+</sc-if>
+
+
+<sc-if value="{{isAccount}}" hint-placeholder-val="{{false}}">
+<div class="tx-page noscroll {{txSearchCls}}">
+<button class="search-btn {{searchBtnCls}}" ref="{{searchBtnRef}}" aria-label="Search" onClick="{{openSearch}}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5l5 5"></path></svg><span>{{searchBtnLabel}}</span></button>
+<sc-for list="{{txGroups}}" as="g" hint-placeholder-count="3">
+<h2 class="tx-date">{{g.label}}</h2>
+<div class="tx-group">
+<sc-for list="{{g.rows}}" as="t" hint-placeholder-count="3">
+<div class="tx-row {{t.rowCls}}"><span style="flex: 1; min-width: 0; display: block"><dc-import name="ListItem" heading="{{t.title}}" detail="{{t.sub}}" icon="{{t.icon}}" trailing="amount" amount="{{t.amount}}" hint-size="100%,48px"></dc-import></span></div>
+</sc-for>
+</div>
+</sc-for>
+<sc-if value="{{noTxns}}" hint-placeholder-val="{{false}}">
+<div class="tx-empty">
+<div style="font-size: 16px; font-weight: 500; color: var(--rbi-black)">{{emptyTitle}}</div>
+<div style="font-size: 14px; color: #6B6B70">Try another period, search or filter.</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<!-- Shared empty state: Connections, Payroll, Payments -->
+<sc-if value="{{showEmpty}}" hint-placeholder-val="{{false}}">
+<div style="flex-grow: 1; min-height: 0; display: flex; flex-direction: column; padding-top: var(--top-chrome)">
+<h1 class="large-title" style="opacity: {{largeTitleO}}">{{largeTitle}}</h1>
+<div class="empty">
+<span class="empty-icon" style="height: 80px; width: 80px; align-items: center">
+<svg width="32" height="32" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="{{emptyD1}}" fill="#000000"></path><path d="{{emptyD2}}" fill="#000000"></path></svg>
+</span>
+<h2 class="empty-title">{{emptyTitle2}}</h2>
+<p class="empty-sub" style="font-size: 15px">{{emptySub}}</p>
+<sc-if value="{{emptyHasAction}}" hint-placeholder-val="{{true}}">
+<button class="empty-btn" onClick="{{emptyAction}}" style="border-radius: 100px; padding-right: 20px; gap: 8px; padding-left: 16px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg><span>{{emptyActionLabel}}</span></button>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+</main>
+
+<!-- Bank details: branded top area scrolls with the page; nav bar floats above -->
+<sc-if value="{{isBank}}" hint-placeholder-val="{{false}}">
+<div class="bank-screen noscroll">
+<div class="brand-bg" aria-hidden="true"></div>
+<div class="bank-body">
+<div class="card bank bank-card bank-hero" style="border-radius: 28px">
+<span class="avatar brand"><img src="assets/images/raiffeisen-mark.svg" alt="Raiffeisen Bank logo" style="width: 80px; height: 80px; display: block; object-fit: contain"></span>
+<h2 class="bank-hero-name">{{bankName}}</h2>
+<span class="status-badge" style="padding-top: 4px">Active</span>
+</div>
+<h3 class="section-title">Accounts</h3>
+<div class="acc-list">
+<sc-for list="{{accountItems}}" as="acc" hint-placeholder-count="3">
+<button class="acc-card" onClick="{{acc.open}}"><span style="flex: 1; min-width: 0; display: block"><dc-import name="ListItem" heading="{{acc.name}}" detail="{{acc.sub}}" icon="{{acc.icon}}" icon-src="{{acc.iconSrc}}" trailing="chevron" hint-size="100%,48px"></dc-import></span></button>
+</sc-for>
+</div>
+<h3 class="section-title cards">Cards</h3>
+<div class="acc-list">
+<sc-for list="{{cardItems}}" as="acc" hint-placeholder-count="1">
+<button class="acc-card" onClick="{{acc.open}}"><span style="flex: 1; min-width: 0; display: block"><dc-import name="ListItem" heading="{{acc.name}}" detail="{{acc.sub}}" icon="{{acc.icon}}" icon-src="{{acc.iconSrc}}" trailing="chevron" hint-size="100%,48px"></dc-import></span></button>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{showNav}}" hint-placeholder-val="{{true}}">
+<span class="bottom-fx {{navFadeCls}}" aria-hidden="true"></span>
+<nav aria-label="Main" class="tabbar glass {{tabbarCls}} {{navFadeCls}}" style="width: 292px">
+<span class="tab-sel {{navSelCls}}"></span>
+<button class="nav-item {{nav.connections}}" aria-current="{{navCur.connections}}" onClick="{{goConnections}}"><svg width="26" height="26" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M3.85453 1.76516C3.16587 1.43637 2.20331 1.2753 0.914627 1.26959C0.793091 1.26794 0.673939 1.30337 0.573062 1.37118C0.49026 1.42715 0.42248 1.5026 0.375683 1.59091C0.328886 1.67922 0.304507 1.77768 0.304689 1.87762V7.33085C0.304689 7.69949 0.566962 7.97758 0.914627 7.97758C2.26926 7.97758 3.62809 8.10414 4.44198 8.87343C4.45311 8.884 4.46711 8.89107 4.48222 8.89375C4.49734 8.89643 4.51291 8.89462 4.52701 8.88853C4.5411 8.88243 4.55309 8.87234 4.56149 8.85948C4.56989 8.84663 4.57433 8.8316 4.57426 8.81624V2.39073C4.57429 2.34738 4.56502 2.30452 4.54707 2.26506C4.52911 2.2256 4.5029 2.19046 4.47019 2.162C4.28376 2.00263 4.07667 1.86914 3.85453 1.76516V1.76516Z" fill="#000000"></path><path d="M9.18479 1.37062C9.08386 1.30299 8.96471 1.26774 8.84323 1.2696V1.2696C7.55454 1.27532 6.59198 1.43562 5.90332 1.76518C5.68119 1.86897 5.47405 2.00219 5.28747 2.16126C5.25484 2.18976 5.22869 2.22492 5.21077 2.26437C5.19285 2.30382 5.18359 2.34665 5.18359 2.38998V8.81588C5.18358 8.83063 5.18793 8.84506 5.19609 8.85735C5.20425 8.86964 5.21586 8.87925 5.22946 8.88497C5.24306 8.89069 5.25804 8.89227 5.27253 8.88951C5.28703 8.88674 5.30038 8.87976 5.31092 8.86944C5.8002 8.38339 6.65888 7.97702 8.84399 7.97721C9.00575 7.97721 9.16089 7.91295 9.27528 7.79856C9.38967 7.68418 9.45393 7.52904 9.45393 7.36727V1.87782C9.45415 1.77768 9.42971 1.67903 9.38278 1.59057C9.33584 1.50212 9.26784 1.42657 9.18479 1.37062Z" fill="#000000"></path></svg><span>Connections</span></button>
+<sc-if value="{{showChatTab}}" hint-placeholder-val="{{false}}">
+<button class="nav-item {{nav.chat}}" aria-current="{{navCur.chat}}" onClick="{{goChat}}"><svg width="26" height="26" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M7.58557 1.56033C6.81642 0.944925 5.86058 0.609865 4.87554 0.610352C3.71436 0.610352 2.62982 1.0577 1.81898 1.87007C1.0354 2.65613 0.605964 3.69397 0.609395 4.79167C0.609422 5.59647 0.845693 6.38355 1.28891 7.05531L1.29253 7.06046C1.29786 7.06827 1.30339 7.07609 1.30892 7.08371C1.31445 7.09133 1.32131 7.10125 1.32283 7.10372L1.32703 7.11135C1.34856 7.14947 1.36515 7.19598 1.35047 7.24287L0.999375 8.51344C0.985329 8.56069 0.977637 8.6096 0.976502 8.65888C0.976249 8.78851 1.02741 8.91296 1.11878 9.00493C1.21014 9.0969 1.33425 9.14889 1.46388 9.1495C1.53238 9.14723 1.59989 9.13244 1.66306 9.10585L2.94946 8.64153L2.96566 8.63524C3.00066 8.62055 3.03826 8.61309 3.07622 8.61332C3.11121 8.61341 3.14589 8.61987 3.17857 8.63238C3.20945 8.64439 3.48983 8.7517 3.78565 8.83442C4.03153 8.90304 4.54312 9.00597 4.94396 9.00597C6.08093 9.00597 7.1426 8.56567 7.93323 7.76589C8.71701 6.97221 9.14854 5.9172 9.14854 4.79396C9.14864 4.50563 9.1181 4.21811 9.05743 3.93623C8.86034 3.00951 8.3377 2.16551 7.58557 1.56033ZM3.04915 5.48986C2.92852 5.48986 2.81059 5.45409 2.71029 5.38707C2.60998 5.32005 2.53181 5.22479 2.48564 5.11334C2.43948 5.00189 2.4274 4.87925 2.45093 4.76093C2.47447 4.64261 2.53256 4.53393 2.61786 4.44863C2.70316 4.36333 2.81184 4.30524 2.93016 4.28171C3.04847 4.25817 3.17111 4.27025 3.28256 4.31641C3.39402 4.36258 3.48927 4.44076 3.5563 4.54106C3.62332 4.64136 3.65909 4.75929 3.65909 4.87992C3.65909 5.04169 3.59483 5.19683 3.48044 5.31122C3.36606 5.4256 3.21092 5.48986 3.04915 5.48986ZM4.87897 5.48986C4.75833 5.48986 4.64041 5.45409 4.5401 5.38707C4.4398 5.32005 4.36162 5.22479 4.31546 5.11334C4.26929 5.00189 4.25721 4.87925 4.28075 4.76093C4.30428 4.64261 4.36237 4.53393 4.44767 4.44863C4.53298 4.36333 4.64166 4.30524 4.75997 4.28171C4.87829 4.25817 5.00093 4.27025 5.11238 4.31641C5.22383 4.36258 5.31909 4.44076 5.38611 4.54106C5.45313 4.64136 5.48891 4.75929 5.48891 4.87992C5.48891 5.04169 5.42464 5.19683 5.31026 5.31122C5.19587 5.4256 5.04073 5.48986 4.87897 5.48986V5.48986ZM6.70878 5.48986C6.58815 5.48986 6.47022 5.45409 6.36992 5.38707C6.26961 5.32005 6.19144 5.22479 6.14527 5.11334C6.09911 5.00189 6.08703 4.87925 6.11056 4.76093C6.1341 4.64261 6.19219 4.53393 6.27749 4.44863C6.36279 4.36333 6.47147 4.30524 6.58979 4.28171C6.70811 4.25817 6.83074 4.27025 6.9422 4.31641C7.05365 4.36258 7.14891 4.44076 7.21593 4.54106C7.28295 4.64136 7.31872 4.75929 7.31872 4.87992C7.31872 5.04169 7.25446 5.19683 7.14007 5.31122C7.02569 5.4256 6.87055 5.48986 6.70878 5.48986Z" fill="#000000"></path></svg><span>Assistant</span></button>
+</sc-if>
+<button class="nav-item {{nav.payroll}}" aria-current="{{navCur.payroll}}" onClick="{{goPayroll}}"><svg width="26" height="26" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M9.45377 3.35479C9.45342 3.03137 9.32478 2.7213 9.09608 2.4926C8.86739 2.26391 8.55731 2.13527 8.23389 2.13492H7.31898V1.82995C7.31873 1.58738 7.22226 1.35481 7.05073 1.18329C6.87921 1.01176 6.64665 0.915291 6.40407 0.915039H3.35438C3.11181 0.915291 2.87925 1.01176 2.70772 1.18329C2.5362 1.35481 2.43973 1.58738 2.43947 1.82995V2.13492H1.52456C1.20114 2.13527 0.891066 2.26391 0.662371 2.4926C0.433676 2.7213 0.305041 3.03137 0.304688 3.35479V4.2697H9.45377V3.35479ZM6.70904 2.13492H3.04941V1.82995C3.04941 1.74906 3.08154 1.67149 3.13874 1.6143C3.19593 1.55711 3.2735 1.52498 3.35438 1.52498H6.40407C6.48496 1.52498 6.56253 1.55711 6.61972 1.6143C6.67691 1.67149 6.70904 1.74906 6.70904 1.82995V2.13492Z" fill="#000000"></path><path d="M6.40407 5.03237C6.40407 5.15369 6.35588 5.27005 6.27009 5.35584C6.1843 5.44163 6.06795 5.48982 5.94662 5.48982H3.81184C3.69051 5.48982 3.57416 5.44163 3.48837 5.35584C3.40258 5.27005 3.35438 5.15369 3.35438 5.03237V4.95613C3.35438 4.9359 3.34635 4.91651 3.33205 4.90221C3.31775 4.88792 3.29836 4.87988 3.27814 4.87988H0.304688V7.62461C0.304688 7.94814 0.43321 8.25842 0.661981 8.48719C0.890753 8.71596 1.20103 8.84449 1.52456 8.84449H8.23389C8.55742 8.84449 8.8677 8.71596 9.09647 8.48719C9.32525 8.25842 9.45377 7.94814 9.45377 7.62461V4.87988H6.48032C6.4601 4.87988 6.4407 4.88792 6.42641 4.90221C6.41211 4.91651 6.40407 4.9359 6.40407 4.95613V5.03237Z" fill="#000000"></path></svg><span>Payroll</span></button>
+<button class="nav-item {{nav.payments}}" aria-current="{{navCur.payments}}" onClick="{{goPayments}}"><svg width="26" height="26" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M9.14852 2.44014C9.14852 2.11661 9.01999 1.80633 8.79122 1.57756C8.56245 1.34878 8.25217 1.22026 7.92864 1.22026H7.62367V0.92387C7.62367 0.759759 7.49749 0.618901 7.33338 0.610705C7.29214 0.608718 7.25093 0.615124 7.21225 0.629534C7.17356 0.643944 7.1382 0.666059 7.10832 0.694537C7.07843 0.723016 7.05464 0.757266 7.03838 0.795212C7.02212 0.833158 7.01374 0.874011 7.01373 0.915293V1.22026H2.74416V0.92387C2.74416 0.759759 2.61798 0.618901 2.45387 0.610705C2.41263 0.608718 2.37142 0.615124 2.33274 0.629534C2.29405 0.643944 2.25869 0.666059 2.22881 0.694537C2.19892 0.723016 2.17513 0.757266 2.15887 0.795212C2.14261 0.833158 2.13423 0.874011 2.13422 0.915293V1.22026H1.82925C1.50572 1.22026 1.19544 1.34878 0.966669 1.57756C0.737897 1.80633 0.609375 2.11661 0.609375 2.44014V2.66887C0.609375 2.68909 0.617408 2.70848 0.631706 2.72278C0.646004 2.73708 0.665397 2.74511 0.685617 2.74511H9.07228C9.0925 2.74511 9.11189 2.73708 9.12619 2.72278C9.14048 2.70848 9.14852 2.68909 9.14852 2.66887V2.44014Z" fill="#000000"></path><path d="M0.609375 7.92903C0.609375 8.25256 0.737897 8.56285 0.966669 8.79162C1.19544 9.02039 1.50572 9.14891 1.82925 9.14891H7.92864C8.25217 9.14891 8.56245 9.02039 8.79122 8.79162C9.01999 8.56285 9.14852 8.25256 9.14852 7.92903V3.43073C9.14852 3.41051 9.14048 3.39112 9.12619 3.37682C9.11189 3.36252 9.0925 3.35449 9.07228 3.35449H0.685617C0.665397 3.35449 0.646004 3.36252 0.631706 3.37682C0.617408 3.39112 0.609375 3.41051 0.609375 3.43073V7.92903Z" fill="#000000"></path></svg><span>Payments</span></button>
+</nav>
+<sc-if value="{{showAiBtn}}" hint-placeholder-val="{{true}}">
+<button class="ai-btn glass glass--dark {{navFadeCls}}" aria-label="Open Assistant" onClick="{{openChat}}"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true"><path d="M9.6 1.2Q10.94 8.26 18 9.6Q10.94 10.94 9.6 18Q8.26 10.94 1.2 9.6Q8.26 8.26 9.6 1.2Z"></path><path d="M18.7 14.4Q19.39 18.01 23 18.7Q19.39 19.39 18.7 23Q18.01 19.39 14.4 18.7Q18.01 18.01 18.7 14.4Z"></path></svg></button>
+</sc-if>
+</sc-if>
+</div>
+
+<!-- Transactions search (active): field rises into the nav bar, Close on the right, keyboard docked at the bottom -->
+<sc-if value="{{searchOpen}}" hint-placeholder-val="{{false}}">
+<div class="search-layer {{searchLayerCls}}">
+<label class="field glass" style="transform: translateY({{searchFieldY}}px)">
+<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5l5 5"></path></svg>
+<input type="search" aria-label="Search" placeholder="Search" autocomplete="off" inputmode="none" ref="{{searchInputRef}}" value="{{search}}" onChange="{{onSearch}}" onClick="{{openSearchKb}}">
+</label>
+<button class="nav-circle glass search-close" aria-label="Close search" onClick="{{closeSearch}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+</sc-if>
+<div class="kb-dock">
+<sc-if value="{{searchKbOpen}}" hint-placeholder-val="{{false}}">
+<div class="kb {{kbAnimCls}}" role="group" aria-label="Keyboard">
+<sc-for list="{{kbRows}}" as="row" hint-placeholder-count="4">
+<div class="kb-row {{row.cls}}">
+<sc-for list="{{row.keys}}" as="k" hint-placeholder-count="10">
+<button class="kb-key {{k.cls}}" aria-label="{{k.aria}}" onMouseDown="{{kbHold}}" onClick="{{k.press}}"><sc-if value="{{k.isShift}}" hint-placeholder-val="{{false}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="{{k.shiftFill}}" stroke="#000000" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6l8.4 8.6h-4.6v7.6H8.2v-7.6H3.6z"></path></svg></sc-if><sc-if value="{{k.isDel}}" hint-placeholder-val="{{false}}"><svg width="27" height="22" viewBox="0 0 27 22" fill="none" stroke="#000000" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M9.2 2.5h13.3a2.5 2.5 0 0 1 2.5 2.5v12a2.5 2.5 0 0 1-2.5 2.5H9.2L2 11z"></path><path d="M12.8 7.3l7 7.4M19.8 7.3l-7 7.4"></path></svg></sc-if><sc-if value="{{k.isRet}}" hint-placeholder-val="{{false}}"><svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="#000000" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M22 3v5.5a3 3 0 0 1-3 3H4"></path><path d="M8.5 7L4 11.5 8.5 16"></path></svg></sc-if><sc-if value="{{k.isEmoji}}" hint-placeholder-val="{{false}}"><svg width="23.4" height="23.4" viewBox="0 0 26 26" fill="none" stroke="#000000" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="13" cy="13" r="10.5"></circle><circle cx="9.4" cy="10.3" r="1.1" fill="#000000" stroke="none"></circle><circle cx="16.6" cy="10.3" r="1.1" fill="#000000" stroke="none"></circle><path d="M7.8 14.6c1.1 2.4 3 3.6 5.2 3.6s4.1-1.2 5.2-3.6z" fill="#000000"></path></svg></sc-if><sc-if value="{{k.isText}}" hint-placeholder-val="{{true}}">{{k.label}}</sc-if></button>
+</sc-for>
+</div>
+</sc-for>
+<div class="kb-bottom">
+<button aria-label="Next keyboard" onMouseDown="{{kbHold}}"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="15" cy="15" r="12"></circle><ellipse cx="15" cy="15" rx="5.2" ry="12"></ellipse><path d="M3 15h24M5.2 8.5h19.6M5.2 21.5h19.6"></path></svg></button>
+<button aria-label="Dictation" onMouseDown="{{kbHold}}"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="11" y="3" width="8" height="15" rx="4"></rect><path d="M6.5 14.5a8.5 8.5 0 0 0 17 0M15 23v4M11 27h8"></path></svg></button>
+</div>
+</div>
+</sc-if>
+</div>
+
+
+
+<sc-if value="{{showSheetDim}}" hint-placeholder-val="{{false}}">
+<button class="sheet-dim {{sheetDimCls}}" aria-label="Close Assistant" tabindex="-1" onClick="{{closeChat}}"></button>
+</sc-if>
+
+
+<!-- Chat layer: a page (classic) or a modal sheet (split); never inside the tab bar -->
+<sc-if value="{{isChat}}" hint-placeholder-val="{{false}}">
+<div class="chat-host {{chatHostCls}}" role="{{chatRole}}" aria-label="Assistant" style="border-top-left-radius: 32px; border-top-right-radius: 32px; background-color: #F5F5F7">
+<sc-if value="{{chatIsModal}}" hint-placeholder-val="{{false}}">
+<div class="nav-bg sheet-nav-bg" aria-hidden="true"><span class="nav-blur"></span><span class="nav-blur b2"></span></div>
+<header class="navbar internal in-sheet" ref="{{sheetBarRef}}">
+<span class="nav-spacer slot-space" aria-hidden="true"></span>
+<span class="nav-title sheet-title" aria-label="{{sheetTitle}}"><span class="st-text {{sheetTitleCls.chat}}" aria-hidden="true">Chat</span><span class="st-text {{sheetTitleCls.history}}" aria-hidden="true">Recent Chats</span></span>
+<span class="nav-spacer slot-space" aria-hidden="true"></span>
+<button class="nav-circle glass nav-slot slot-l" aria-label="{{sheetLeftLabel}}" onClick="{{sheetLeftAction}}"><span class="slot-icon {{sheetIcon.close}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></span><span class="slot-icon {{sheetIcon.back}}"><svg class="back-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></span></button>
+<button class="nav-circle glass nav-slot slot-r {{sheetRightCls}}" aria-label="Recent chats" aria-hidden="{{sheetRightHidden}}" tabindex="{{sheetRightTab}}" onClick="{{openHistory}}"><span class="slot-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4.5 9h15M4.5 15h10"></path></svg></span></button>
+</header>
+</sc-if>
+<div class="sheet-stage" ref="{{sheetStageRef}}">
+<div class="sheet-layer chat-body {{chatLayerCls}}" ref="{{chatLayerRef}}" aria-hidden="{{chatLayerHidden}}" style="transform: {{chatLayerX}}">
+<div class="noscroll chat-scroll" ref="{{chatRef}}" onScroll="{{onChatScroll}}" onClick="{{closeKb}}" style="flex-grow: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column">
+<div class="chat-thread" style="display: flex; flex-direction: column; gap: 20px">
+<sc-if value="{{chatShowLargeTitle}}" hint-placeholder-val="{{false}}"><h1 class="large-title" style="margin: -24px calc(-1 * var(--page-inset)) 8px; opacity: {{largeTitleO}}; transform: translateY({{largeTitleShift}}px)">Assistant</h1></sc-if>
+<sc-for list="{{messages}}" as="m" hint-placeholder-count="4">
+<div class="msg-row {{m.from}}">
+<div class="bubble {{m.from}}"><div class="bubble-text">{{m.text}}</div></div>
+</div>
+</sc-for>
+<sc-if value="{{aiThinking}}" hint-placeholder-val="{{false}}">
+<div class="ai-think" role="status" aria-label="{{aiStatusText}}">
+<span class="ai-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+<span class="ai-status" aria-hidden="true"><sc-for list="{{aiStatusItems}}" as="st" hint-placeholder-count="1"><span class="{{st.cls}}">{{st.text}}</span></sc-for></span>
+</div>
+</sc-if>
+<sc-if value="{{aiStopped}}" hint-placeholder-val="{{false}}">
+<div class="ai-stopped" role="status"><span>Response stopped</span><button class="ai-retry" onClick="{{retryAi}}">Try again</button></div>
+</sc-if>
+</div>
+</div>
+<div class="composer-row {{kbRowCls}} {{composerModalCls}}" ref="{{composerRowRef}}">
+<span class="composer-fx" aria-hidden="true" style="height: 76px; top: -6px"></span>
+<label class="composer glass"><input aria-label="Message" placeholder="Ask the Assistant" ref="{{inputRef}}" inputmode="none" autocomplete="off" value="{{draft}}" onChange="{{onDraft}}" onKeyDown="{{onDraftKey}}" onClick="{{openKb}}"><span class="send-wrap {{sendCls}}" aria-hidden="{{sendHidden}}"><button class="send-btn" tabindex="{{sendTab}}" aria-label="{{sendLabel}}" onClick="{{sendOrStop}}"><svg class="send-ico {{sendIcoCls.send}}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"></path></svg><svg class="send-ico {{sendIcoCls.stop}}" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="0.5" y="0.5" width="11" height="11" rx="2.5" fill="currentColor"></rect></svg></button></span></label>
+</div>
+<sc-if value="{{kbOpen}}" hint-placeholder-val="{{false}}">
+<div class="kb {{kbAnimCls}}" role="group" aria-label="Keyboard">
+<sc-for list="{{kbRows}}" as="row" hint-placeholder-count="4">
+<div class="kb-row {{row.cls}}">
+<sc-for list="{{row.keys}}" as="k" hint-placeholder-count="10">
+<button class="kb-key {{k.cls}}" aria-label="{{k.aria}}" onMouseDown="{{kbHold}}" onClick="{{k.press}}"><sc-if value="{{k.isShift}}" hint-placeholder-val="{{false}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="{{k.shiftFill}}" stroke="#000000" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6l8.4 8.6h-4.6v7.6H8.2v-7.6H3.6z"></path></svg></sc-if><sc-if value="{{k.isDel}}" hint-placeholder-val="{{false}}"><svg width="27" height="22" viewBox="0 0 27 22" fill="none" stroke="#000000" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M9.2 2.5h13.3a2.5 2.5 0 0 1 2.5 2.5v12a2.5 2.5 0 0 1-2.5 2.5H9.2L2 11z"></path><path d="M12.8 7.3l7 7.4M19.8 7.3l-7 7.4"></path></svg></sc-if><sc-if value="{{k.isRet}}" hint-placeholder-val="{{false}}"><svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="#000000" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M22 3v5.5a3 3 0 0 1-3 3H4"></path><path d="M8.5 7L4 11.5 8.5 16"></path></svg></sc-if><sc-if value="{{k.isEmoji}}" hint-placeholder-val="{{false}}"><svg width="23.4" height="23.4" viewBox="0 0 26 26" fill="none" stroke="#000000" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="13" cy="13" r="10.5"></circle><circle cx="9.4" cy="10.3" r="1.1" fill="#000000" stroke="none"></circle><circle cx="16.6" cy="10.3" r="1.1" fill="#000000" stroke="none"></circle><path d="M7.8 14.6c1.1 2.4 3 3.6 5.2 3.6s4.1-1.2 5.2-3.6z" fill="#000000"></path></svg></sc-if><sc-if value="{{k.isText}}" hint-placeholder-val="{{true}}">{{k.label}}</sc-if></button>
+</sc-for>
+</div>
+</sc-for>
+<div class="kb-bottom">
+<button aria-label="Next keyboard" onMouseDown="{{kbHold}}"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="15" cy="15" r="12"></circle><ellipse cx="15" cy="15" rx="5.2" ry="12"></ellipse><path d="M3 15h24M5.2 8.5h19.6M5.2 21.5h19.6"></path></svg></button>
+<button aria-label="Dictation" onMouseDown="{{kbHold}}"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="11" y="3" width="8" height="15" rx="4"></rect><path d="M6.5 14.5a8.5 8.5 0 0 0 17 0M15 23v4M11 27h8"></path></svg></button>
+</div>
+</div>
+</sc-if>
+</div>
+<sc-if value="{{historyMounted}}" hint-placeholder-val="{{false}}">
+<div class="sheet-layer history-layer {{historyLayerCls}}" ref="{{historyLayerRef}}" aria-hidden="{{historyLayerHidden}}" style="transform: {{historyLayerX}}">
+<div class="history-list noscroll">
+<div class="tx-group">
+<sc-for list="{{chatHistory}}" as="h" hint-placeholder-count="7">
+<button class="tx-row tap {{h.rowCls}}" onClick="{{h.open}}"><span style="flex: 1; min-width: 0; display: block"><dc-import name="ListItem" heading="{{h.title}}" detail="{{h.preview}}" icon="chat" trailing="none" hint-size="100%,48px"></dc-import></span></button>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+
+<sc-if value="{{menuCard}}" hint-placeholder-val="{{false}}">
+<button class="scrim-clear" aria-label="Close menu" onClick="{{closeMenu}}"></button>
+<div class="menu" role="menu" style="top: 107px; right: var(--page-inset)">
+<button class="menu-item" role="menuitem" onClick="{{closeMenu}}">Refresh</button>
+<button class="menu-item" role="menuitem" onClick="{{disconnect}}">Disconnect</button>
+</div>
+</sc-if>
+
+<sc-if value="{{pickerCalendar}}" hint-placeholder-val="{{false}}">
+<div role="dialog" aria-label="Select range" style="position: absolute; top: 56px; left: 0; right: 0; bottom: 0; background: var(--app-bg); display: flex; flex-direction: column; z-index: 5">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px 0 5px">
+<button class="icon-btn" aria-label="Close" onClick="{{closePicker}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+<button class="text-btn" disabled="{{saveDisabled}}" onClick="{{saveCalendar}}">Save</button>
+</div>
+<div style="padding: 4px 16px 18px 76px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 14px; font-weight: 600; letter-spacing: .1px">Select range</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<div class="range-text {{draftRangeCls}}">{{draftRangeText}}</div>
+<button class="icon-btn" aria-label="Switch to text input" onClick="{{toInputMode}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75zM20.7 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75z"></path></svg></button>
+</div>
+</div>
+<div aria-hidden="true" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); height: 44px; align-items: center; border-bottom: 1px solid #45434A; font-size: 14px; font-weight: 500; text-align: center">
+<span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+</div>
+<div class="noscroll" style="flex-grow: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column-reverse">
+<div style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 24px">
+<sc-for list="{{months}}" as="mo" hint-placeholder-count="3">
+<div>
+<div style="padding: 24px 17px 16px; font-size: 15px; letter-spacing: .2px">{{mo.label}}</div>
+<div class="cal-grid">
+<sc-for list="{{mo.cells}}" as="c" hint-placeholder-count="30">
+<div class="cell {{c.band}}">
+<sc-if value="{{c.isDay}}" hint-placeholder-val="{{true}}">
+<button class="day {{c.cls}}" disabled="{{c.disabled}}" aria-label="{{c.aria}}" onClick="{{c.pick}}">{{c.label}}</button>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{pickerInput}}" hint-placeholder-val="{{false}}">
+<button class="scrim" aria-label="Close date picker" onClick="{{closePicker}}"></button>
+<div role="dialog" aria-label="Select range" style="position: absolute; left: 44px; right: 44px; top: 163px; background: #F6F5F1; border-radius: 28px; padding: 22px 24px 18px; display: flex; flex-direction: column; box-shadow: 0 8px 28px rgba(0,0,0,.25)">
+<div style="font-size: 14px; font-weight: 500; letter-spacing: .1px">Select range</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 20px 0 24px">
+<div class="range-text {{inputRangeCls}}" style="font-size: 30px">{{inputRangeText}}</div>
+<button class="icon-btn" aria-label="Switch to calendar" style="margin-right: -12px" onClick="{{toCalendarMode}}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="1.5"></rect><path d="M4 10h16"></path><path d="M8 3v4M16 3v4"></path></svg></button>
+</div>
+<div style="display: flex; gap: 10px">
+<label class="ofield {{startErrCls}}"><span class="olabel">Start Date</span><input inputmode="numeric" placeholder="mm/dd/yyyy" value="{{inputStart}}" onChange="{{onInputStart}}"></label>
+<label class="ofield {{endErrCls}}"><span class="olabel">End Date</span><input inputmode="numeric" placeholder="mm/dd/yyyy" value="{{inputEnd}}" onChange="{{onInputEnd}}"></label>
+</div>
+<div style="min-height: 20px; padding: 6px 4px 0; font-size: 12.5px; color: #B3261E">{{inputError}}</div>
+<div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px">
+<button class="text-btn" onClick="{{closePicker}}">Cancel</button>
+<button class="text-btn" onClick="{{saveInput}}">OK</button>
+</div>
+</div>
+</sc-if>
+
+<img class="device-status" src="assets/images/status-bar.svg" alt="">
+<img class="device-home" src="assets/images/home-indicator.svg" alt="">
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tabBarVariant":{"editor":"enum","options":["split","classic"],"default":"split","section":"Navigation"},"glassHighlightDebug":{"editor":"boolean","default":false,"section":"Liquid glass test"},"$preview":{"width":430,"height":932}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Compact nav title: fades in once the large title has scrolled under the nav bar
+    // The large title's text is 43px tall; the compact title only starts once it is fully under the nav bar.
+    // Opacity is stored per screen, so a value from another screen can never leak in.
+    // Large title centre (content top 106 + 2 + 20.5) meets the nav bar centre (56 + 25) at 47.5px of scroll.
+    // From 47.5 the large title is held at the nav centre (translateY cancels further scroll) while it fades 100 -> 0 (47.5-57.5).  57.5-67.5: compact title fades in and rises 6px. Never both at once.
+    this.TITLE_OUT = [47.5, 57.5];
+    this.TITLE_IN = [57.5, 67.5];
+    this.ramp = (y, r) => Math.max(0, Math.min(1, (y - r[0]) / (r[1] - r[0])));
+    this.titleO = (y) => this.ramp(y, this.TITLE_IN);
+    this.setNavFromScroll = (y) => {
+      const key = this.screenKey();
+      const yc = Math.round(Math.max(40, Math.min(75, y)) * 2) / 2;
+      const cur = this.state.navKey === key ? this.state.navY : null;
+      if (this.state.navKey !== key || cur !== yc) this.setState({ navKey: key, navY: yc });
+    };
+    this.onListScroll = (e) => this.setNavFromScroll(e.currentTarget.scrollTop);
+    this.onChatScroll = (e) => {
+      const y = e.currentTarget.scrollTop;
+      if (this.isSplit()) {
+        const o = this.titleO(y);
+        if (Math.abs(o - (this.state.chatO || 0)) > 0.01 || ((o === 0 || o === 1) && o !== this.state.chatO)) this.setState({ chatO: o });
+      } else this.setNavFromScroll(y);
+    };
+    // Chat opens at scroll position 0 (large title visible)
+    this.inputRef = (el) => {
+      this._inputEl = el;
+      if (el && this._focusInput) { this._focusInput = false; try { el.focus({ preventScroll: true }); } catch (e) {} }
+    };
+    this.rootRef = (el) => { this._rootEl = el; };
+    // Shared navigation transition: one stage + nav bar per scope (the app, and the chat sheet)
+    this.navRefs = { app: {}, sheet: {} };
+    const r = (scope, key) => (el) => { this.navRefs[scope][key] = el; };
+    this.stageRef = r('app', 'stage'); this.barRef = r('app', 'bar'); this.ghostRef = r('app', 'ghost'); this.barGhostRef = r('app', 'barGhost');
+    this.sheetStageRef = r('sheet', 'stage'); this.sheetBarRef = r('sheet', 'bar'); this.sheetGhostRef = r('sheet', 'ghost'); this.sheetBarGhostRef = r('sheet', 'barGhost');
+    this.searchBtnRef = (el) => { this._searchBtnEl = el; };
+    this.searchInputRef = (el) => {
+      if (el && this._focusSearch) { this._focusSearch = false; try { el.focus({ preventScroll: true }); } catch (e) {} }
+    };
+    this.composerRowRef = (el) => { this._composerRow = el; };
+    this.chatLayerRef = (el) => { this._chatLayer = el; };
+    this.historyLayerRef = (el) => { this._historyLayer = el; };
+    this.chatRef = (el) => {
+      if (el && el !== this._chatEl) { this._chatEl = el; el.scrollTop = 0; }
+      if (!el) this._chatEl = null;
+    };
+    this.state = {
+      navO: 0,
+      kbOpen: false,
+      kbLayout: 'abc',
+      kbShift: null,
+      tab: 'connections',
+      settings: false,
+      connView: 'root',
+      accountId: null,
+      connectedIds: [],
+      draftIds: [],
+      bankId: null,
+      menu: null,
+      sheet: null,
+      search: '',
+      pendingOnly: false,
+      range: null,
+      picker: null,
+      draftStart: null,
+      draftEnd: null,
+      inputStart: '',
+      inputEnd: '',
+      inputError: '',
+      inputErrField: null,
+      draft: '',
+      botTyping: false,
+      messages: []
+    };
+  }
+
+  // iOS-style push/pop. Snapshot the current screen + nav bar content, apply the state change, then animate:
+  //   forward: new screen slides in from the right (100% -> 0); old one moves left 28% underneath (parallax)
+  //   back:    current slides out to the right (0 -> 100%); previous returns from -28% -> 0
+  // Nav bar content cross-fades with a small slide; the nav bar container/background, status bar and home
+  // indicator never move.
+  navigate(scope, dir, change) {
+    const R = this.navRefs[scope] || {};
+    const reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!R.stage || !R.ghost || !R.stage.animate || reduce) { change(); return; }
+    (this._navAnims || []).forEach((a) => { try { a.finish(); } catch (e) {} });
+    const snap = R.stage.cloneNode(true);
+    snap.setAttribute('aria-hidden', 'true');
+    if (scope === 'sheet') snap.classList.add('nav-snapshot'); // modal only; full-screen snapshots unchanged
+    snap.removeAttribute('id');
+    R.ghost.replaceChildren(snap);
+    // keep scroll positions in the snapshot
+    const from = R.stage.querySelectorAll('*'), to = snap.querySelectorAll('*');
+    for (let i = 0; i < from.length && i < to.length; i++) if (from[i].scrollTop) to[i].scrollTop = from[i].scrollTop;
+    R.ghost.style.zIndex = dir === 'back' ? '1' : '';
+    // title ghost: a copy of the current title, placed exactly where it is, which travels out with the old screen
+    const titleEl = R.bar ? R.bar.querySelector('.nav-title') : null;
+    let tSnap = null;
+    if (titleEl && R.barGhost && parseFloat(getComputedStyle(titleEl).opacity) > 0.01) {
+      const g = R.barGhost.getBoundingClientRect(), t = titleEl.getBoundingClientRect();
+      const k = (this._rootEl ? this._rootEl.getBoundingClientRect().width / 430 : 1) || 1;
+      tSnap = titleEl.cloneNode(true);
+      tSnap.removeAttribute('style');
+      Object.assign(tSnap.style, { position: 'absolute', margin: '0', left: (t.left - g.left) / k + 'px', top: (t.top - g.top) / k + 'px', width: t.width / k + 'px', height: t.height / k + 'px', opacity: getComputedStyle(titleEl).opacity, padding: '0', transform: 'none' });
+      R.barGhost.replaceChildren(tSnap);
+    }
+    change();
+    requestAnimationFrame(() => {
+      const fwd = dir !== 'back';
+      const D = 480, E = 'cubic-bezier(.28,.7,.06,1)';
+      const flat = scope === 'sheet'; // modal-internal navigation: clean and flat (no edge shadow, no dim)
+      const edgeOn = flat ? 'none' : '-10px 0 28px rgba(0,0,0,.08)', edgeOff = flat ? 'none' : '-10px 0 28px rgba(0,0,0,0)';
+      const T = 110; // title travel: the outgoing title is gone about halfway to the edge
+      const shade = document.createElement('div');
+      Object.assign(shade.style, { position: 'absolute', inset: '0', background: '#000', opacity: '0', pointerEvents: 'none' });
+      // the screen underneath is covered by a light shade: forward -> old screen darkens; back -> previous screen brightens
+      if (fwd) R.ghost.appendChild(shade); else R.ghost.insertBefore(shade, snap);
+      const DIM = flat ? 0 : 0.12;
+      const anims = [
+        // live element animations have no fill, so they end exactly on their natural state (no final-frame snap)
+        R.stage.animate(fwd
+          ? [{ transform: 'translateX(100%)', boxShadow: edgeOn }, { offset: 0.8, boxShadow: edgeOn }, { transform: 'translateX(0)', boxShadow: edgeOff }]
+          : [{ transform: 'translateX(-28%)' }, { transform: 'translateX(0)' }], { duration: D, easing: E }),
+        snap.animate(fwd
+          ? [{ transform: 'translateX(0)' }, { transform: 'translateX(-28%)' }]
+          : [{ transform: 'translateX(0)', boxShadow: edgeOn }, { transform: 'translateX(100%)', boxShadow: edgeOn }], { duration: D, easing: E, fill: 'forwards' }),
+        shade.animate(fwd ? [{ opacity: 0 }, { opacity: DIM }] : [{ opacity: DIM }, { opacity: 0 }], { duration: D, easing: E, fill: 'forwards' })
+      ];
+      // layering while moving: screen underneath < nav bar gradient/blur (z2) < moving top screen (z3) < nav controls (z4) < status bar
+      R.stage.style.zIndex = '';
+      if (scope === 'app') { if (fwd) R.stage.style.zIndex = '3'; else R.ghost.style.zIndex = '3'; }
+      if (tSnap && flat) anims.push(tSnap.animate([{ opacity: tSnap.style.opacity }, { opacity: 0 }], { duration: Math.round(D * 0.6), easing: 'ease-out', fill: 'forwards' })); // modal: fixed position, text cross-fade only
+      else if (tSnap) anims.push(tSnap.animate([{ transform: 'translateX(0)', opacity: tSnap.style.opacity }, { offset: flat ? 0.14 : 0.22, opacity: 0 }, { transform: 'translateX(' + (fwd ? -T : T) + 'px)', opacity: 0 }], { duration: D, easing: E, fill: 'forwards' }));
+      const newTitle = R.bar ? R.bar.querySelector('.nav-title') : null;
+      if (newTitle) {
+        const target = parseFloat(getComputedStyle(newTitle).opacity);
+        if (target > 0.01 && flat) anims.push(newTitle.animate([{ opacity: 0 }, { offset: 0.25, opacity: 0 }, { opacity: target }], { duration: Math.round(D * 0.8), easing: 'ease-in-out' }));
+        else if (target > 0.01) anims.push(newTitle.animate([{ transform: 'translateX(' + (fwd ? T : -T) + 'px)', opacity: 0 }, { offset: flat ? 0.28 : 0.2, opacity: 0 }, { offset: 0.6, opacity: target }, { transform: getComputedStyle(newTitle).transform === 'none' ? 'translateX(0)' : getComputedStyle(newTitle).transform, opacity: target }], { duration: D, easing: E }));
+      }
+      this._navAnims = anims;
+      Promise.all(anims.map((a) => a.finished)).then(() => {
+        if (this._navAnims !== anims) return;
+        // only the ghost copies are removed (they are already invisible/off-screen); live elements are untouched
+        R.ghost.replaceChildren(); R.ghost.style.zIndex = ''; R.stage.style.zIndex = '';
+        if (R.barGhost) R.barGhost.replaceChildren();
+      }).catch(() => {});
+    });
+  }
+
+  // Chat <-> Recent Chats: the two real content layers move (no copies). Chat stays mounted (its input is never
+  // rebuilt); Recent Chats mounts for the forward move and unmounts after the back move. Nav bar stays one layer.
+  sheetNav(dir) {
+    if (this._sheetBusy) return;
+    const fwd = dir === 'fwd';
+    const c = this._chatLayer, h = this._historyLayer;
+    const reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !c || !h || !h.animate) { this.setState({ historyOpen: fwd }); return; }
+    this._sheetBusy = true;
+    // fill 'both' holds the first frame immediately and the last frame until cancel; the resting inline styles
+    // committed below equal the last frame, so cancelling at the end changes nothing on screen.
+    const o = { duration: 480, easing: 'cubic-bezier(.28,.7,.06,1)', fill: 'both' };
+    const a1 = h.animate(fwd ? [{ transform: 'translateX(100%)' }, { transform: 'translateX(0)' }] : [{ transform: 'translateX(0)' }, { transform: 'translateX(100%)' }], o);
+    const a2 = c.animate(fwd ? [{ transform: 'translateX(0)' }, { transform: 'translateX(-28%)' }] : [{ transform: 'translateX(-28%)' }, { transform: 'translateX(0)' }], o);
+    this.setState({ historyOpen: fwd });
+    Promise.all([a1.finished, a2.finished]).then(() => {
+      a1.cancel(); a2.cancel(); this._sheetBusy = false;
+    }).catch(() => { this._sheetBusy = false; });
+  }
+
+  isSplit() { return (this.props.tabBarVariant ?? 'split') !== 'classic'; }
+  // Each visit to a screen gets a fresh key, so a scroll state from an earlier visit is never reused
+  screenKey() {
+    const st = this.state;
+    const k = [st.tab, st.connView, st.settings ? 's' : ''].join('|');
+    if (k !== this._lastScreen) { this._lastScreen = k; this._visit = (this._visit || 0) + 1; }
+    return k + '#' + this._visit;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // A newly sent or received message scrolls the thread to the latest message
+    if (this._chatEl && (prevState.messages.length !== this.state.messages.length || prevState.botTyping !== this.state.botTyping) && this.state.tab === 'chat') {
+      const el = this._chatEl;
+      requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+    }
+    if (prevState.tab !== this.state.tab || prevState.connView !== this.state.connView || prevState.settings !== this.state.settings) {
+      const patch = {};
+      if (this.state.navO !== 0) patch.navO = 0;
+      if (this.state.kbOpen) patch.kbOpen = false;
+      if (Object.keys(patch).length) this.setState(patch);
+    }
+  }
+
+  componentWillUnmount() { clearTimeout(this.botTimer); clearInterval(this.aiTicker); }
+
+  accounts() {
+    return [
+      { id: 'a1', name: 'Oauth account 1', type: 'card', balance: '2002.90 EUR', cur: 'EUR' },
+      { id: 'a2', name: 'Oauth account 2', type: 'account', balance: '2017.24 USD', cur: 'USD' },
+      { id: 'a3', name: 'Oauth BTC account 3', type: 'account', balance: '0.02 BTC', cur: 'BTC' },
+      { id: 'a4', name: '5325 **** **** 1285', type: 'credit_card', balance: '-2017.24 USD', cur: 'USD' }
+    ];
+  }
+
+  // Placeholder transactions: 3 date groups (3, 5 and 2 rows). Amounts in the account currency
+  txnsFor(acc) {
+    const rows = [
+      ['2026-09-12', 'Amazon Marketplace', 'Online shopping · Pending', -48.90, true],
+      ['2026-09-12', 'Uber', 'Transport · Pending', -14.20, true],
+      ['2026-09-12', 'Acme Consulting GmbH', 'Invoice INV-2041 · 09:15', 1250.00, false],
+      ['2026-09-11', 'Starbucks', 'Café · 18:42', -5.60, false],
+      ['2026-09-11', 'Google Workspace', 'Subscription · 14:05', -13.80, false],
+      ['2026-09-11', 'Northwind Traders', 'Payment received · 11:30', 420.00, false],
+      ['2026-09-11', 'Lidl', 'Groceries · 10:12', -36.45, false],
+      ['2026-09-11', 'Vodafone', 'Mobile plan · 08:00', -25.00, false],
+      ['2026-09-10', 'Spotify', 'Subscription · 21:10', -10.99, false],
+      ['2026-09-10', 'Globex Ltd', 'Payment received · 16:48', 880.00, false]
+    ];
+    const btc = acc.cur === 'BTC';
+    const fmt = (v) => {
+      const a = Math.abs(btc ? v * 0.000016 : v);
+      const n = btc ? a.toFixed(5) : a.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const sym = { EUR: '€', USD: '$', GBP: '£', UAH: '₴', BTC: '₿' }[acc.cur] || (acc.cur + ' ');
+      return (v < 0 ? '−' : '+') + sym + n;
+    };
+    return rows.map((r, i) => ({ id: acc.id + '-t' + i, date: r[0], title: r[1], sub: r[2], value: r[3], amount: fmt(r[3]), neg: r[3] < 0, pending: r[4] }));
+  }
+
+  // Empty-state icons: the same paths as the tab bar icons (10×10 viewBox)
+  emptyIconPaths() {
+    return {"connections": ["M3.85453 1.76516C3.16587 1.43637 2.20331 1.2753 0.914627 1.26959C0.793091 1.26794 0.673939 1.30337 0.573062 1.37118C0.49026 1.42715 0.42248 1.5026 0.375683 1.59091C0.328886 1.67922 0.304507 1.77768 0.304689 1.87762V7.33085C0.304689 7.69949 0.566962 7.97758 0.914627 7.97758C2.26926 7.97758 3.62809 8.10414 4.44198 8.87343C4.45311 8.884 4.46711 8.89107 4.48222 8.89375C4.49734 8.89643 4.51291 8.89462 4.52701 8.88853C4.5411 8.88243 4.55309 8.87234 4.56149 8.85948C4.56989 8.84663 4.57433 8.8316 4.57426 8.81624V2.39073C4.57429 2.34738 4.56502 2.30452 4.54707 2.26506C4.52911 2.2256 4.5029 2.19046 4.47019 2.162C4.28376 2.00263 4.07667 1.86914 3.85453 1.76516V1.76516Z", "M9.18479 1.37062C9.08386 1.30299 8.96471 1.26774 8.84323 1.2696V1.2696C7.55454 1.27532 6.59198 1.43562 5.90332 1.76518C5.68119 1.86897 5.47405 2.00219 5.28747 2.16126C5.25484 2.18976 5.22869 2.22492 5.21077 2.26437C5.19285 2.30382 5.18359 2.34665 5.18359 2.38998V8.81588C5.18358 8.83063 5.18793 8.84506 5.19609 8.85735C5.20425 8.86964 5.21586 8.87925 5.22946 8.88497C5.24306 8.89069 5.25804 8.89227 5.27253 8.88951C5.28703 8.88674 5.30038 8.87976 5.31092 8.86944C5.8002 8.38339 6.65888 7.97702 8.84399 7.97721C9.00575 7.97721 9.16089 7.91295 9.27528 7.79856C9.38967 7.68418 9.45393 7.52904 9.45393 7.36727V1.87782C9.45415 1.77768 9.42971 1.67903 9.38278 1.59057C9.33584 1.50212 9.26784 1.42657 9.18479 1.37062Z"], "payroll": ["M9.45377 3.35479C9.45342 3.03137 9.32478 2.7213 9.09608 2.4926C8.86739 2.26391 8.55731 2.13527 8.23389 2.13492H7.31898V1.82995C7.31873 1.58738 7.22226 1.35481 7.05073 1.18329C6.87921 1.01176 6.64665 0.915291 6.40407 0.915039H3.35438C3.11181 0.915291 2.87925 1.01176 2.70772 1.18329C2.5362 1.35481 2.43973 1.58738 2.43947 1.82995V2.13492H1.52456C1.20114 2.13527 0.891066 2.26391 0.662371 2.4926C0.433676 2.7213 0.305041 3.03137 0.304688 3.35479V4.2697H9.45377V3.35479ZM6.70904 2.13492H3.04941V1.82995C3.04941 1.74906 3.08154 1.67149 3.13874 1.6143C3.19593 1.55711 3.2735 1.52498 3.35438 1.52498H6.40407C6.48496 1.52498 6.56253 1.55711 6.61972 1.6143C6.67691 1.67149 6.70904 1.74906 6.70904 1.82995V2.13492Z", "M6.40407 5.03237C6.40407 5.15369 6.35588 5.27005 6.27009 5.35584C6.1843 5.44163 6.06795 5.48982 5.94662 5.48982H3.81184C3.69051 5.48982 3.57416 5.44163 3.48837 5.35584C3.40258 5.27005 3.35438 5.15369 3.35438 5.03237V4.95613C3.35438 4.9359 3.34635 4.91651 3.33205 4.90221C3.31775 4.88792 3.29836 4.87988 3.27814 4.87988H0.304688V7.62461C0.304688 7.94814 0.43321 8.25842 0.661981 8.48719C0.890753 8.71596 1.20103 8.84449 1.52456 8.84449H8.23389C8.55742 8.84449 8.8677 8.71596 9.09647 8.48719C9.32525 8.25842 9.45377 7.94814 9.45377 7.62461V4.87988H6.48032C6.4601 4.87988 6.4407 4.88792 6.42641 4.90221C6.41211 4.91651 6.40407 4.9359 6.40407 4.95613V5.03237Z"], "payments": ["M9.14852 2.44014C9.14852 2.11661 9.01999 1.80633 8.79122 1.57756C8.56245 1.34878 8.25217 1.22026 7.92864 1.22026H7.62367V0.92387C7.62367 0.759759 7.49749 0.618901 7.33338 0.610705C7.29214 0.608718 7.25093 0.615124 7.21225 0.629534C7.17356 0.643944 7.1382 0.666059 7.10832 0.694537C7.07843 0.723016 7.05464 0.757266 7.03838 0.795212C7.02212 0.833158 7.01374 0.874011 7.01373 0.915293V1.22026H2.74416V0.92387C2.74416 0.759759 2.61798 0.618901 2.45387 0.610705C2.41263 0.608718 2.37142 0.615124 2.33274 0.629534C2.29405 0.643944 2.25869 0.666059 2.22881 0.694537C2.19892 0.723016 2.17513 0.757266 2.15887 0.795212C2.14261 0.833158 2.13423 0.874011 2.13422 0.915293V1.22026H1.82925C1.50572 1.22026 1.19544 1.34878 0.966669 1.57756C0.737897 1.80633 0.609375 2.11661 0.609375 2.44014V2.66887C0.609375 2.68909 0.617408 2.70848 0.631706 2.72278C0.646004 2.73708 0.665397 2.74511 0.685617 2.74511H9.07228C9.0925 2.74511 9.11189 2.73708 9.12619 2.72278C9.14048 2.70848 9.14852 2.68909 9.14852 2.66887V2.44014Z", "M0.609375 7.92903C0.609375 8.25256 0.737897 8.56285 0.966669 8.79162C1.19544 9.02039 1.50572 9.14891 1.82925 9.14891H7.92864C8.25217 9.14891 8.56245 9.02039 8.79122 8.79162C9.01999 8.56285 9.14852 8.25256 9.14852 7.92903V3.43073C9.14852 3.41051 9.14048 3.39112 9.12619 3.37682C9.11189 3.36252 9.0925 3.35449 9.07228 3.35449H0.685617C0.665397 3.35449 0.646004 3.36252 0.631706 3.37682C0.617408 3.39112 0.609375 3.41051 0.609375 3.43073V7.92903Z"]};
+  }
+
+  pad(n) { return (n < 10 ? '0' : '') + n; }
+  iso(y, m, d) { return y + '-' + this.pad(m + 1) + '-' + this.pad(d); }
+  parts(iso) { const p = iso.split('-'); return { y: +p[0], m: +p[1] - 1, d: +p[2] }; }
+  short(iso) {
+    const M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const p = this.parts(iso);
+    return M[p.m] + ' ' + p.d;
+  }
+  toInput(iso) { if (!iso) return ''; const p = this.parts(iso); return this.pad(p.m + 1) + '/' + this.pad(p.d) + '/' + p.y; }
+  parseInput(s) {
+    const r = /^\s*(\d{1,2})\/(\d{1,2})\/(\d{4})\s*$/.exec(s || '');
+    if (!r) return null;
+    const m = +r[1] - 1, d = +r[2], y = +r[3];
+    const dt = new Date(y, m, d);
+    if (dt.getFullYear() !== y || dt.getMonth() !== m || dt.getDate() !== d) return null;
+    return this.iso(y, m, d);
+  }
+  rangeText(s, e) {
+    if (!s) return 'Start Date – End Date';
+    return this.short(s) + ' – ' + (e ? this.short(e) : 'End Date');
+  }
+  now() { const d = new Date(); return this.pad(d.getHours()) + ':' + this.pad(d.getMinutes()); }
+
+  buildMonths(today) {
+    const LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const s = this.state.draftStart, e = this.state.draftEnd;
+    const out = [];
+    [[2026, 6], [2026, 7], [2026, 8]].forEach(([y, m]) => {
+      const cells = [];
+      const lead = new Date(y, m, 1).getDay();
+      const days = new Date(y, m + 1, 0).getDate();
+      for (let i = 0; i < lead; i++) cells.push({ key: y + '-' + m + '-b' + i, isDay: false, band: '' });
+      for (let d = 1; d <= days; d++) {
+        const id = this.iso(y, m, d);
+        const sel = id === s || id === e;
+        let band = '';
+        if (s && e && s !== e) {
+          if (id > s && id < e) band = 'band';
+          else if (id === s) band = 'band-r';
+          else if (id === e) band = 'band-l';
+        }
+        cells.push({
+          key: id, isDay: true, label: String(d), band,
+          cls: (sel ? 'sel ' : '') + (id === today ? 'today' : ''),
+          disabled: id > today,
+          aria: LONG[m] + ' ' + d + ', ' + y,
+          pick: () => this.pickDay(id)
+        });
+      }
+      out.push({ key: y + '-' + m, label: LONG[m] + ' ' + y, cells });
+    });
+    return out;
+  }
+
+  pickDay(id) {
+    const { draftStart: s, draftEnd: e } = this.state;
+    if (!s || e) this.setState({ draftStart: id, draftEnd: null });
+    else if (id < s) this.setState({ draftStart: id });
+    else this.setState({ draftEnd: id });
+  }
+
+  // Simulated iOS keyboard rows
+  buildKeyboard() {
+    const st = this.state;
+    const F = st.kbTarget === 'search' ? 'search' : 'draft';
+    const draft = st[F];
+    const autoCap = draft.length === 0 || /[.!?]\s$/.test(draft);
+    const upper = st.kbShift !== null ? st.kbShift : autoCap;
+    const type = (ch) => this.setState({ [F]: this.state[F] + ch, kbShift: null });
+    const key = (label, extra) => Object.assign({ key: label, label, cls: '', aria: label, isShift: false, isDel: false, isRet: false, isEmoji: false, isText: true, shiftFill: 'none', press: () => type(label) }, extra || {});
+    const shift = key('shift', { key: 'shift', cls: 'mod gap-r', aria: 'Shift', isShift: true, isText: false, shiftFill: upper ? '#000000' : 'none', press: () => this.setState({ kbShift: !upper }) });
+    const del = key('delete', { key: 'delete', cls: 'mod gap-l', aria: 'Delete', isDel: true, isText: false, press: () => this.setState({ [F]: this.state[F].slice(0, -1), kbShift: null }) });
+    const mode = (label, to, cls) => key(label, { key: 'mode-' + label, cls: cls, aria: label === '123' ? 'Numbers' : label === 'ABC' ? 'Letters' : 'Symbols', press: () => this.setState({ kbLayout: to }) });
+    const emoji = key('emoji', { key: 'emoji', cls: 'b48', aria: 'Emoji', isEmoji: true, isText: false, press: () => {} });
+    const space = key('', { key: 'space', aria: 'Space', press: () => type(' ') });
+    const ret = key('return', { key: 'return', cls: 'ret', aria: 'Return', isRet: true, isText: false, press: () => (F === 'search' ? this.setState({ kbOpen: false }) : this.sendMessage()) });
+    const letters = (str) => str.split('').map((c) => { const ch = upper ? c.toUpperCase() : c; return key(ch, { key: 'k-' + c, press: () => type(ch) }); });
+    const syms = (arr) => arr.map((c) => key(c, { key: 's-' + c, cls: 'sym' }));
+    if (st.kbLayout === 'abc') {
+      return [
+        { key: 'r1', cls: '', keys: letters('qwertyuiop') },
+        { key: 'r2', cls: 'r2', keys: letters('asdfghjkl') },
+        { key: 'r3', cls: '', keys: [shift].concat(letters('zxcvbnm'), [del]) },
+        { key: 'r4', cls: '', keys: [mode('123', 'num', 'b48'), emoji, space, ret] }
+      ];
+    }
+    const num = st.kbLayout === 'num';
+    return [
+      { key: 'r1', cls: '', keys: syms(num ? '1234567890'.split('') : ['[', ']', '{', '}', '#', '%', '^', '*', '+', '=']) },
+      { key: 'r2', cls: '', keys: syms(num ? ['-', '/', ':', ';', '(', ')', '$', '&', '@', '"'] : ['_', '\\', '|', '~', '<', '>', '€', '£', '¥', '•']) },
+      { key: 'r3', cls: '', keys: [num ? mode('#+=', 'sym', 'mod gap-r sym') : mode('123', 'num', 'mod gap-r sym')].concat(syms(['.', ',', '?', '!', "'"]), [del]) },
+      { key: 'r4', cls: '', keys: [mode('ABC', 'abc', 'b48'), emoji, space, ret] }
+    ];
+  }
+
+  // ---- simulated assistant (local mock only) ----
+  // Recent Chats: load a simple mock conversation into the Chat screen and go back to it (same structure for every chat)
+  openRecent(title, preview) {
+    this.clearAi();
+    const t = Date.now();
+    this.setState({
+      aiState: null, draft: '',
+      messages: [
+        { id: 'r1' + t, from: 'me', text: 'Can you help me with ' + (/^[A-Z][a-z]/.test(title) ? title.charAt(0).toLowerCase() + title.slice(1) : title) + '?', time: this.now() },
+        { id: 'r2' + t, from: 'bot', text: preview + ' Would you like me to go into more detail?', time: this.now() },
+        { id: 'r3' + t, from: 'me', text: 'Yes, please show me the details.', time: this.now() },
+        { id: 'r4' + t, from: 'bot', text: 'Here are the key points for ' + title + '. You can ask me a follow-up question at any time.', time: this.now() }
+      ]
+    });
+    this.sheetNav('back');
+    this.scrollChat();
+  }
+  scrollChat() { const el = this._chatEl; if (el) requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; }); }
+  clearAi() { clearTimeout(this.botTimer); clearInterval(this.aiTicker); }
+  startThinking() {
+    this.clearAi();
+    this.setState({ aiState: 'thinking', aiStep: 0 });
+    this.scrollChat();
+    this.aiTicker = setInterval(() => this.setState({ aiStep: (this.state.aiStep || 0) + 1 }), 1500);
+    const POOL = [
+      'Here is a quick summary: your EUR account holds €2,002.90, and Acme Consulting paid €1,250.00 on September 12.',
+      'This week your spending was mostly subscriptions (Google Workspace, Spotify) and groceries at Lidl.',
+      'Your USD account holds $2,017.24. At today’s rate that is roughly €1,860 before fees.',
+      'I can prepare a payment for you. Tell me the recipient, amount and date, and I’ll draft it for your review.',
+      'The Amazon Marketplace charge of €48.90 is still pending. Card payments usually settle within 1–3 business days.'
+    ];
+    this.botTimer = setTimeout(() => {
+      clearInterval(this.aiTicker);
+      let i = Math.floor(Math.random() * POOL.length);
+      if (i === this._lastReply) i = (i + 1) % POOL.length;
+      this._lastReply = i;
+      this.setState({ aiState: null, messages: this.state.messages.concat([{ id: 'b' + Date.now(), from: 'bot', text: POOL[i], time: this.now() }]) });
+      this.scrollChat();
+    }, 5600);
+  }
+  stopThinking() { this.clearAi(); this.setState({ aiState: 'stopped' }); this.scrollChat(); }
+
+  sendMessage() {
+    if (this.state.aiState === 'thinking') return;
+    const text = this.state.draft.trim();
+    if (!text) return;
+    const msgs = this.state.messages.concat([{ id: 'u' + Date.now(), from: 'me', text, time: this.now() }]);
+    this.setState({ messages: msgs, draft: '', aiState: null });
+    this.startThinking();
+  }
+
+  renderVals() {
+    const TODAY = '2026-09-24';
+    const st = this.state;
+    const accs = this.accounts();
+    const acc = accs.find((a) => a.id === st.accountId) || accs[0];
+    const BANKS = [];
+    for (let i = 1; i <= 20; i++) BANKS.push({ id: 'rb' + i, name: i === 1 ? 'Raiffeisen Bank' : 'Raiffeisen Bank ' + i });
+    const bankById = (id) => BANKS.find((b) => b.id === id);
+    const ids = st.connectedIds;
+    const hasBanks = ids.length > 0;
+    const curBank = bankById(st.bankId) || BANKS[0];
+    // Selection screen edits a temporary copy; only Save commits it
+    const draft = st.draftIds || [];
+    const toggleBank = (id) => { const d = this.state.draftIds || []; this.setState({ draftIds: d.indexOf(id) === -1 ? d.concat([id]) : d.filter((x) => x !== id) }); };
+    const openSelect = () => this.navigate('app', 'fwd', () => this.setState({ tab: 'connections', connView: 'select', menu: null, draftIds: this.state.connectedIds.slice() }));
+    const sameSet = (x, y) => x.length === y.length && x.every((v) => y.indexOf(v) !== -1);
+    const dirty = !sameSet(draft, ids);
+    const allSelected = BANKS.every((b) => draft.indexOf(b.id) !== -1);
+    const split = this.isSplit();
+    const hlDebug = !!(this.props.glassHighlightDebug ?? false);
+    // In the split variant Chat is not a tab; it opens as a modal over the current tab
+    const tab = split && st.tab === 'chat' ? 'connections' : st.tab;
+    const chatVisible = split ? !!st.chatOpen : tab === 'chat';
+    const emptyKey = tab === 'payroll' ? 'payroll' : tab === 'payments' ? 'payments' : (tab === 'connections' && st.connView === 'root' && !hasBanks ? 'connections' : null);
+    const EMPTY = {
+      connections: { title: 'No banks connected', sub: 'Connect a bank to see your accounts and transactions here.', action: 'Connect New Bank', onAction: openSelect },
+      payroll: { title: 'No payrolls yet', sub: 'Payrolls you create will appear here.', action: null, onAction: null },
+      payments: { title: 'No payments yet', sub: 'Payments you add will appear here.', action: 'Add New Payment', onAction: () => {} }
+    };
+    const em = emptyKey ? EMPTY[emptyKey] : null;
+    const navY = st.navKey === this.screenKey() ? (st.navY || 0) : 0;
+    const navO = this.ramp(navY, this.TITLE_IN);
+    const largeO = 1 - this.ramp(navY, this.TITLE_OUT);
+    const chatO = st.chatO || 0;
+    const inConn = tab === 'connections';
+    const isSub = inConn && st.connView !== 'root';
+
+    const q = st.search.trim().toLowerCase();
+    const txns = this.txnsFor(acc)
+      .filter((t) => !st.pendingOnly || t.pending)
+      .filter((t) => !q || t.title.toLowerCase().indexOf(q) !== -1)
+      .filter((t) => !st.range || (t.date >= st.range.start && t.date <= st.range.end));
+    // Group by date, newest first; label like "September 12"
+    const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const txGroups = [];
+    txns.forEach((t) => {
+      let g = txGroups.find((x) => x.key === t.date);
+      if (!g) { const p = this.parts(t.date); g = { key: t.date, label: MONTHS[p.m] + ' ' + p.d, rows: [] }; txGroups.push(g); }
+      g.rows.push({ key: t.id, title: t.title, sub: t.sub, amount: t.amount, icon: t.neg ? 'out' : 'in', rowCls: g.rows.length ? 'divided' : '' });
+    });
+
+    const inS = this.parseInput(st.inputStart), inE = this.parseInput(st.inputEnd);
+
+    const go = (t) => () => this.setState({ tab: t, menu: null, kbOpen: false });
+
+    const internal = isSub || st.settings;
+    let vals = null;
+    vals = {
+      hlDebugCls: hlDebug ? 'hl-debug' : '',
+      // fixed nav slots
+      leftSlotCls: internal ? '' : 'off',
+      leftHidden: internal ? 'false' : 'true',
+      leftTab: internal ? '0' : '-1',
+      leftAction: internal ? () => vals.goBack() : () => {},
+      showBack: internal,
+      showSettings: !internal,
+      rightBtnCls: !internal ? ('topnav-btn lglass ' + (hlDebug ? 'hl-debug' : '')) : 'nav-circle glass' + (!st.settings && st.connView === 'select' ? ' select-all' : ''),
+      rightSlotCls: (!internal || (!st.settings && ['bank', 'select', 'account'].indexOf(st.connView) !== -1)) ? '' : 'off',
+      rightHidden: (!internal || (!st.settings && ['bank', 'select', 'account'].indexOf(st.connView) !== -1)) ? 'false' : 'true',
+      rightTab: (!internal || (!st.settings && ['bank', 'select', 'account'].indexOf(st.connView) !== -1)) ? '0' : '-1',
+      rightLabel: !internal ? 'Settings' : st.settings ? '' : st.connView === 'bank' ? 'More options' : st.connView === 'select' ? 'Select all banks' : st.connView === 'account' ? 'Filter transactions' : '',
+      rightPressed: !st.settings && st.connView === 'select' ? (allSelected ? 'true' : 'false') : 'false',
+      ri: {
+        settings: !internal ? '' : 'off',
+        more: internal && !st.settings && st.connView === 'bank' ? '' : 'off',
+        select: internal && !st.settings && st.connView === 'select' ? '' : 'off',
+        filter: internal && !st.settings && st.connView === 'account' ? '' : 'off'
+      },
+      rightAction: () => {
+        if (!internal) return vals.openSettings();
+        if (st.settings) return;
+        if (st.connView === 'bank') return vals.openCardMenu();
+        if (st.connView === 'select') return vals.toggleSelectAll();
+        if (st.connView === 'account') return vals.openFilter();
+      },
+      // chat sheet slots
+      sheetTitle: st.historyOpen ? 'Recent Chats' : 'Chat',
+      sheetLeftLabel: st.historyOpen ? 'Back' : 'Close chat',
+      sheetLeftAction: () => (this.state.historyOpen ? vals.closeHistory() : vals.closeChat()),
+      sheetIcon: { close: st.historyOpen ? 'off' : '', back: st.historyOpen ? '' : 'off' },
+      sheetRightCls: st.historyOpen ? 'off' : '',
+      sheetRightHidden: st.historyOpen ? 'true' : 'false',
+      sheetRightTab: st.historyOpen ? '-1' : '0',
+      showMore: !st.settings && isSub && st.connView === 'bank',
+      showRightSpacer: internal && !(!st.settings && (st.connView === 'bank' || st.connView === 'select' || st.connView === 'account')),
+      showFilter: !st.settings && isSub && st.connView === 'account',
+      openFilter: () => {},
+      showSelectAll: !st.settings && isSub && st.connView === 'select',
+      allSelected,
+      allSelectedCls: allSelected ? 'on' : '',
+      allSelectedAria: allSelected ? 'true' : 'false',
+      toggleSelectAll: () => this.setState({ draftIds: allSelected ? [] : BANKS.map((b) => b.id) }),
+      saveBarCls: dirty ? 'show' : '',
+      saveHidden: dirty ? 'false' : 'true',
+      saveTab: dirty ? '0' : '-1',
+      saveConnections: () => { const next = (this.state.draftIds || []).slice(); this.navigate('app', 'back', () => this.setState({ connectedIds: next, draftIds: next, connView: 'root', menu: null })); },
+      navCls: internal ? ('internal' + (!st.settings && st.connView === 'bank' ? ' overlay' : '')) : '',
+      openSettings: () => this.navigate('app', 'fwd', () => this.setState({ settings: true, menu: null, kbOpen: false })),
+      bankName: curBank.name,
+      navTitle: st.settings ? 'Settings' : isSub ? (st.connView === 'select' ? 'Select Bank' : st.connView === 'bank' ? '' : acc.name) : (tab === 'chat' ? 'Assistant' : tab === 'payroll' ? 'Payroll' : tab === 'payments' ? 'Payments' : 'Connections'),
+      navTitleCls: '',
+      navTitleO: internal ? '1' : navO.toFixed(3),
+      navTitleY: internal ? '0' : (6 * (1 - navO)).toFixed(2),
+      navTitleHidden: internal || navO > 0.5 ? 'false' : 'true',
+      largeTitleO: largeO.toFixed(3),
+      largeTitleShift: Math.max(0, navY - this.TITLE_OUT[0]).toFixed(2),
+      onListScroll: this.onListScroll,
+      onChatScroll: this.onChatScroll,
+      chatRef: this.chatRef,
+      largeTitle: tab === 'chat' ? 'Assistant' : tab === 'payroll' ? 'Payroll' : tab === 'payments' ? 'Payments' : 'Connections',
+      showNav: !isSub && !(!split && tab === 'chat' && st.kbOpen),
+      tabbarCls: split ? 'split' : '',
+      navFadeCls: split && st.chatOpen && !st.chatClosing ? 'nav-dimmed' : '',
+      showSheetDim: split && !!st.chatOpen,
+      sheetDimCls: st.chatClosing ? 'closing' : '',
+      showChatTab: !split,
+      showAiBtn: split,
+      openChat: () => {
+        clearTimeout(this.chatCloseTimer); this.clearAi();
+        this._focusInput = true;
+        // Every session starts empty, with the input focused and the keyboard rising with the sheet
+        clearTimeout(this.chatOpenTimer); this.chatOpenTimer = setTimeout(() => this.setState({ chatOpening: false }), 460);
+        this._sheetBusy = false;
+        this.setState({ chatOpening: true, historyOpen: false, chatOpen: true, chatClosing: false, chatO: 0, messages: [], draft: '', botTyping: false, aiState: null, kbOpen: true, kbTarget: 'chat', kbNoAnim: true, kbLayout: 'abc', kbShift: null, menu: null });
+      },
+      historyOpen: !!st.historyOpen,
+      chatMain: !st.historyOpen,
+      // resting positions only; the move itself is a compositor animation over these (no end-of-move re-render)
+      chatLayerX: st.historyOpen ? 'translateX(-28%)' : 'none',
+      chatLayerCls: st.historyOpen ? 'inactive' : '',
+      chatLayerHidden: st.historyOpen ? 'true' : 'false',
+      historyMounted: true,
+      historyLayerX: st.historyOpen ? 'none' : 'translateX(100%)',
+      historyLayerCls: st.historyOpen ? '' : 'inactive',
+      historyLayerHidden: st.historyOpen ? 'false' : 'true',
+      sheetTitleCls: { chat: st.historyOpen ? 'off' : 'on', history: st.historyOpen ? 'on' : 'off' },
+      chatLayerRef: this.chatLayerRef, historyLayerRef: this.historyLayerRef,
+      openHistory: () => this.sheetNav('fwd'),
+      closeHistory: () => this.sheetNav('back'),
+      chatHistory: [
+        ['September spending summary', 'Card spending is up 12% on August, mostly travel and software.'],
+        ['EUR to USD conversion', 'At today’s rate, €1,000 is about $1,085 before fees.'],
+        ['October payroll draft', 'I’ve prepared payments for 12 employees, due on October 1.'],
+        ['Northwind Traders payment', 'The €420.00 transfer arrived on September 11.'],
+        ['Unrecognised card charge', 'The Amazon Marketplace charge of €48.90 is still pending.'],
+        ['Account balances', 'You have three accounts and one card at Raiffeisen Bank.'],
+        ['Invoice INV-2041', 'Acme Consulting paid €1,250.00 on September 12.']
+      ].map((r, i) => ({ key: 'h' + i, title: r[0], preview: r[1], rowCls: i ? 'divided' : '', open: () => this.openRecent(r[0], r[1]) })),
+      closeChat: () => {
+        this.setState({ chatClosing: true, kbOpen: false });
+        clearTimeout(this.chatCloseTimer);
+        this.chatCloseTimer = setTimeout(() => this.setState({ chatOpen: false, chatClosing: false }), 300);
+      },
+      chatIsModal: split,
+      chatHostCls: split ? ('sheet' + (st.chatClosing ? ' closing' : '') + (st.chatOpening ? ' opening' : '')) : 'page',
+      chatRole: split ? 'dialog' : 'region',
+      chatShowLargeTitle: !split,
+      kbAnimCls: st.kbNoAnim ? 'no-anim' : '',
+      inputRef: this.inputRef,
+      composerModalCls: split && !st.kbOpen ? 'in-modal' : '',
+      isConnRoot: inConn && st.connView === 'root',
+      isBank: inConn && st.connView === 'bank',
+      isSelect: inConn && st.connView === 'select',
+      showBankList: inConn && st.connView === 'root' && hasBanks,
+      connectedBanks: ids.map((id) => { const b = bankById(id); return { key: id, name: b.name, open: () => this.navigate('app', 'fwd', () => this.setState({ connView: 'bank', bankId: id })) }; }),
+      bankChoices: BANKS.map((b) => { const on = draft.indexOf(b.id) !== -1; const saved = ids.indexOf(b.id) !== -1; return { key: b.id, name: b.name, connected: on, pressed: on ? 'true' : 'false', status: saved ? 'Connected' : '2 accounts', checkCls: on ? 'on' : '', toggle: () => toggleBank(b.id) }; }),
+      openSelect,
+      showEmpty: !!em,
+      emptyD1: emptyKey ? this.emptyIconPaths()[emptyKey][0] : '',
+      emptyD2: emptyKey ? this.emptyIconPaths()[emptyKey][1] : '',
+      emptyTitle2: em ? em.title : '',
+      emptySub: em ? em.sub : '',
+      emptyHasAction: !!(em && em.action),
+      emptyActionLabel: em && em.action ? em.action : '',
+      emptyAction: em && em.onAction ? em.onAction : () => {},
+      isAccount: inConn && st.connView === 'account',
+      isChat: chatVisible,
+      isPayroll: tab === 'payroll',
+      isPayments: tab === 'payments',
+      nav: {
+        connections: inConn ? 'on' : '',
+        chat: tab === 'chat' ? 'on' : '',
+        payroll: tab === 'payroll' ? 'on' : '',
+        payments: tab === 'payments' ? 'on' : ''
+      },
+      navCur: {
+        connections: inConn ? 'page' : 'false',
+        chat: tab === 'chat' ? 'page' : 'false',
+        payroll: tab === 'payroll' ? 'page' : 'false',
+        payments: tab === 'payments' ? 'page' : 'false'
+      },
+      navSelCls: 'i' + Math.max(0, (split ? ['connections', 'payroll', 'payments'] : ['connections', 'chat', 'payroll', 'payments']).indexOf(tab)),
+      goConnections: () => this.setState({ tab: 'connections', connView: 'root', menu: null, kbOpen: false }),
+      goChat: go('chat'),
+      goPayroll: go('payroll'),
+      goPayments: go('payments'),
+
+      goBack: () => this.navigate('app', 'back', () => (this.state.settings ? this.setState({ settings: false }) : this.setState({ connView: st.connView === 'account' ? 'bank' : 'root', picker: null, menu: null, searchOpen: false, kbOpen: false }))),
+      accounts: accs.map((a) => Object.assign({}, a, { sub: a.balance, open: () => this.navigate('app', 'fwd', () => this.setState({ connView: 'account', accountId: a.id, search: '', pendingOnly: false, range: null })) })),
+      // Bank Details: currency accounts with their flag/coin icons, and cards separately; subtitle = balance only
+      accountItems: accs.filter((a) => a.type !== 'credit_card').map((a) => ({ key: a.id, name: a.name, sub: a.balance, icon: 'image', iconSrc: { EUR: 'assets/images/currency-eur.svg', USD: 'assets/images/currency-usd.svg', BTC: 'assets/images/currency-btc.svg' }[a.cur] || '', open: () => this.navigate('app', 'fwd', () => this.setState({ connView: 'account', accountId: a.id, search: '', pendingOnly: false, range: null })) })),
+      cardItems: accs.filter((a) => a.type === 'credit_card').map((a) => ({ key: a.id, name: a.name, sub: a.balance, icon: 'account', iconSrc: '', open: () => this.navigate('app', 'fwd', () => this.setState({ connView: 'account', accountId: a.id, search: '', pendingOnly: false, range: null })) })),
+
+      menuCard: st.menu === 'card',
+      openCardMenu: () => this.setState({ menu: 'card' }),
+      closeMenu: () => this.setState({ menu: null }),
+      disconnect: () => this.navigate('app', 'back', () => this.setState({ menu: null, connView: 'root', connectedIds: this.state.connectedIds.filter((x) => x !== this.state.bankId) })),
+
+      search: st.search,
+      onSearch: (e) => this.setState({ search: e.target.value }),
+      searchOpen: isSub && st.connView === 'account' && !!st.searchOpen,
+      searchLayerCls: st.searchPhase === 'on' ? 'on' : '',
+      searchFieldY: st.searchPhase === 'on' ? '0' : (st.searchFromY || 0).toFixed(2),
+      navSearchCls: isSub && st.connView === 'account' && st.searchOpen ? ('search-session' + (st.searchPhase === 'on' ? ' searching' : '')) : '',
+      searchBtnCls: (st.searchOpen ? 'hide ' : '') + (st.search ? 'has-q' : ''),
+      searchBtnLabel: st.search ? st.search : 'Search',
+      txSearchCls: isSub && st.connView === 'account' && st.searchOpen && st.searchPhase === 'on' ? 'search-up' : '',
+      searchBtnRef: this.searchBtnRef,
+      searchInputRef: this.searchInputRef,
+      rootRef: this.rootRef,
+      composerRowRef: this.composerRowRef,
+      stageRef: this.stageRef, barRef: this.barRef, ghostRef: this.ghostRef, barGhostRef: this.barGhostRef,
+      sheetStageRef: this.sheetStageRef, sheetBarRef: this.sheetBarRef, sheetGhostRef: this.sheetGhostRef, sheetBarGhostRef: this.sheetBarGhostRef,
+      openSearch: () => {
+        // start the field exactly where the compact button is, then animate it up into the nav bar
+        let fromY = 59;
+        try { const b = this._searchBtnEl.getBoundingClientRect(); const r = this._rootEl.getBoundingClientRect(); fromY = (b.top - r.top) * (430 / r.width) - 59; } catch (e) { fromY = 59; }
+        this._focusSearch = true;
+        clearTimeout(this.searchTimer);
+        this.setState({ searchOpen: true, searchPhase: 'from', searchFromY: fromY, kbOpen: true, kbTarget: 'search', kbNoAnim: false, kbLayout: 'abc', kbShift: null });
+        requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ searchPhase: 'on' })));
+      },
+      openSearchKb: () => { if (!this.state.kbOpen) this.setState({ kbOpen: true, kbTarget: 'search', kbLayout: 'abc', kbShift: null }); },
+      closeSearch: () => {
+        this.setState({ searchPhase: 'from', kbOpen: false, search: '' });
+        clearTimeout(this.searchTimer);
+        // like iOS Cancel: closing clears the query (immediately, so nothing changes after the reverse move)
+        this.searchTimer = setTimeout(() => this.setState({ searchOpen: false }), 290);
+      },
+      switchCls: st.pendingOnly ? 'on' : '',
+      pendingAria: st.pendingOnly ? 'true' : 'false',
+      togglePending: () => this.setState({ pendingOnly: !st.pendingOnly }),
+      txGroups,
+      noTxns: txns.length === 0,
+      emptyTitle: st.pendingOnly ? 'No pending transactions' : 'No transactions found',
+      hasRange: !!st.range,
+      periodCls: st.range ? 'active' : '',
+      periodLabel: st.range ? (st.range.start === st.range.end ? this.short(st.range.start) : this.short(st.range.start) + ' – ' + this.short(st.range.end)) : 'Period',
+      clearRange: () => this.setState({ range: null }),
+
+      openPicker: () => this.setState({
+        picker: 'calendar',
+        draftStart: st.range ? st.range.start : null,
+        draftEnd: st.range ? st.range.end : null,
+        inputError: '', inputErrField: null
+      }),
+      closePicker: () => this.setState({ picker: null }),
+      pickerCalendar: st.picker === 'calendar',
+      pickerInput: st.picker === 'input',
+      months: st.picker === 'calendar' ? this.buildMonths(TODAY) : [],
+      draftRangeText: this.rangeText(st.draftStart, st.draftEnd),
+      draftRangeCls: st.draftStart ? '' : 'ph',
+      saveDisabled: !st.draftStart,
+      saveCalendar: () => this.setState({
+        picker: null,
+        range: { start: st.draftStart, end: st.draftEnd || st.draftStart }
+      }),
+      toInputMode: () => this.setState({
+        picker: 'input',
+        inputStart: this.toInput(st.draftStart),
+        inputEnd: this.toInput(st.draftEnd),
+        inputError: '', inputErrField: null
+      }),
+      toCalendarMode: () => this.setState({
+        picker: 'calendar',
+        draftStart: inS || st.draftStart,
+        draftEnd: inS && inE && inE >= inS ? inE : (inS ? null : st.draftEnd)
+      }),
+      inputStart: st.inputStart,
+      inputEnd: st.inputEnd,
+      onInputStart: (e) => this.setState({ inputStart: e.target.value, inputError: '', inputErrField: null }),
+      onInputEnd: (e) => this.setState({ inputEnd: e.target.value, inputError: '', inputErrField: null }),
+      inputRangeText: this.rangeText(inS, inS ? inE : null),
+      inputRangeCls: inS ? '' : 'ph',
+      inputError: st.inputError,
+      startErrCls: st.inputErrField === 'start' ? 'err' : '',
+      endErrCls: st.inputErrField === 'end' ? 'err' : '',
+      saveInput: () => {
+        if (!inS) return this.setState({ inputError: 'Invalid format. Use mm/dd/yyyy.', inputErrField: 'start' });
+        if (!inE) return this.setState({ inputError: 'Invalid format. Use mm/dd/yyyy.', inputErrField: 'end' });
+        if (inS > TODAY) return this.setState({ inputError: 'Out of range.', inputErrField: 'start' });
+        if (inE > TODAY) return this.setState({ inputError: 'Out of range.', inputErrField: 'end' });
+        if (inE < inS) return this.setState({ inputError: 'Invalid range.', inputErrField: 'end' });
+        this.setState({ picker: null, range: { start: inS, end: inE } });
+      },
+
+      messages: st.messages,
+      botTyping: st.botTyping,
+      aiThinking: st.aiState === 'thinking',
+      aiStopped: st.aiState === 'stopped',
+      aiStatusText: ['Thinking…', 'Gathering information…', 'Preparing response…'][(st.aiStep || 0) % 3],
+      aiStatusItems: (() => {
+        const P = ['Thinking…', 'Gathering information…', 'Preparing response…'];
+        const k = st.aiStep || 0;
+        const ab = k % 2 ? 'a' : 'b';
+        const cur = { key: 's' + k, text: P[k % 3], cls: k ? 'st-in-' + ab : '' };
+        return k ? [{ key: 's' + (k - 1), text: P[(k - 1) % 3], cls: 'st-out-' + ab }, cur] : [cur];
+      })(),
+      retryAi: () => this.startThinking(),
+      sendLabel: st.aiState === 'thinking' ? 'Stop response' : 'Send message',
+      sendIcoCls: { send: st.aiState === 'thinking' ? 'off' : '', stop: st.aiState === 'thinking' ? '' : 'off' },
+      sendOrStop: () => (this.state.aiState === 'thinking' ? this.stopThinking() : this.sendMessage()),
+      draft: st.draft,
+      onDraft: (e) => this.setState({ draft: e.target.value }),
+      onDraftKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); this.sendMessage(); } },
+      kbOpen: chatVisible && st.kbOpen && st.kbTarget !== 'search',
+      kbRowCls: chatVisible && st.kbOpen && st.kbTarget !== 'search' ? 'above-kb' : '',
+      kbRows: st.kbOpen ? this.buildKeyboard() : [],
+      searchKbOpen: !!st.searchOpen && st.kbOpen && st.kbTarget === 'search',
+      openKb: () => {
+        if (this.state.kbOpen && this.state.kbTarget === 'chat') return;
+        this.setState({ kbOpen: true, kbTarget: 'chat', kbNoAnim: false, kbLayout: 'abc', kbShift: null });
+        // the input rides up on top of the keyboard with the keyboard's own timing
+        requestAnimationFrame(() => {
+          const row = this._composerRow, kb = row && row.parentNode ? row.parentNode.querySelector('.kb') : null;
+          if (!row || !kb || !row.animate) return;
+          const dy = kb.offsetHeight - 32; // keyboard height minus the 44 -> 12px padding change
+          row.animate([{ transform: 'translateY(' + dy + 'px)' }, { transform: 'translateY(0)' }], { duration: 320, easing: 'cubic-bezier(.2,.9,.3,1)' });
+        });
+      },
+      closeKb: () => {
+        if (!this.state.kbOpen || this._kbClosing) return;
+        const row = this._composerRow, kb = row && row.parentNode ? row.parentNode.querySelector('.kb') : null;
+        if (!row || !kb || !kb.animate) { this.setState({ kbOpen: false }); return; }
+        // keyboard slides down and the input moves down with it, together; state flips once they arrive
+        this._kbClosing = true;
+        const o = { duration: 280, easing: 'cubic-bezier(.3,.1,.3,1)', fill: 'forwards' };
+        const dy = kb.offsetHeight - 32;
+        const a1 = kb.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(100%)' }], o);
+        const a2 = row.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(' + dy + 'px)' }], o);
+        a2.finished.then(() => {
+          this.setState({ kbOpen: false });
+          requestAnimationFrame(() => { a1.cancel(); a2.cancel(); this._kbClosing = false; });
+        }).catch(() => { this._kbClosing = false; });
+      },
+      kbHold: (e) => e.preventDefault(),
+      sendCls: st.draft.length > 0 || st.aiState === 'thinking' ? 'show' : '',
+      sendHidden: st.draft.length > 0 || st.aiState === 'thinking' ? 'false' : 'true',
+      sendTab: st.draft.length > 0 || st.aiState === 'thinking' ? '0' : '-1',
+      send: () => this.sendMessage()
+    };
+    // Settings is its own internal screen: hide every tab's content and the tab bar
+    if (st.settings) {
+      ['showBankList', 'isSelect', 'isBank', 'isAccount', 'isChat', 'showEmpty', 'showNav', 'kbOpen'].forEach((k) => { vals[k] = false; });
+    }
+    return vals;
+  }
+}
+</script>
+</body>
+</html>
