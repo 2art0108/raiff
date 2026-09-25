@@ -9,7 +9,7 @@ import vm from 'node:vm';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
 const checkOnly = process.argv.includes('--check');
-const DEPLOY = ['index.html', 'runtime', 'components', 'assets'];
+const DEPLOY = ['index.html', 'manifest.webmanifest', 'runtime', 'components', 'assets'];
 const errors = [];
 const fail = (msg) => errors.push(msg);
 const exists = (p) => stat(p).then(() => true, () => false);

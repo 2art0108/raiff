@@ -1,0 +1,11 @@
+{
+  "name": "SoftBees",
+  "short_name": "SoftBees",
+  "description": "SoftBees — interactive iOS-style banking app prototype.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F5F7",
+  "theme_color": "#F5F5F7"
+}

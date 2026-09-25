@@ -5,8 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SoftBees</title>
 <meta name="description" content="SoftBees — interactive iOS-style banking app prototype.">
+<!-- Installed Web App (Add to Home Screen) -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SoftBees">
+<meta name="theme-color" content="#F5F5F7">
 <link rel="preload" href="assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/SharpGrotesk-Medium20.otf" as="font" type="font/otf" crossorigin>
+<script>
+// Installed standalone Web App (iOS Home Screen, or display-mode standalone/fullscreen) vs browser preview
+(function () {
+  var mq = function (q) { return !!(window.matchMedia && window.matchMedia(q).matches); };
+  if (window.navigator.standalone === true || mq('(display-mode: standalone)') || mq('(display-mode: fullscreen)')) {
+    document.documentElement.classList.add('dc-standalone');
+  }
+})();
+</script>
 <style>
 /* Hosting wrapper only: centres the fixed 430×932 prototype and scales it down to fit narrow viewports.
    Nothing inside #dc-root is changed. --app-bg comes from the prototype's own tokens. */
@@ -14,6 +30,49 @@ html,body{margin:0;background:var(--app-bg,#F5F5F7);overflow-x:hidden}
 .dc-page{display:flex;justify-content:center;align-items:flex-start;width:100%;overflow:hidden}
 .dc-slot{position:relative;flex:none;width:430px;height:932px}
 .dc-frame{position:absolute;left:0;top:0;width:430px;height:932px;transform-origin:0 0}
+
+/* ---- Installed standalone Web App only (html.dc-standalone) ----
+   The prototype's fake status bar (56px) and home indicator (32px) are hidden, and the real iOS safe areas take
+   their place. The frame fills the screen height. Every rule shifts by the difference between the real inset
+   (converted to the prototype's 430px coordinates via --dc-scale) and the fake chrome it replaces, so all
+   spacing relationships to the status bar / home indicator are preserved. Gradients, blur and scrolling
+   content keep running underneath the system areas. */
+html.dc-standalone{
+  --dc-dt:max(calc(env(safe-area-inset-top, 0px) / var(--dc-scale, 1) - 56px), -56px);
+  --dc-db:max(calc(env(safe-area-inset-bottom, 0px) / var(--dc-scale, 1) - 32px), -12px);
+  --top-chrome:calc(106px + var(--dc-dt));
+  --home-area:calc(32px + var(--dc-db));
+}
+html.dc-standalone,html.dc-standalone body{height:100%;overflow:hidden;overscroll-behavior:none}
+html.dc-standalone #dc-root > .sc-host > div:first-of-type{height:var(--dc-frame-h, 932px) !important}
+html.dc-standalone .device-status,html.dc-standalone .device-home{display:none !important}
+/* top: nav bar, its gradient + progressive blur, screens below it */
+html.dc-standalone .navbar:not(.in-sheet){padding-top:calc(56px + var(--dc-dt))}
+html.dc-standalone .nav-slot{top:calc(59px + var(--dc-dt))}
+html.dc-standalone .nav-bg:not(.sheet-nav-bg) .nav-blur{-webkit-mask-image:linear-gradient(180deg,#000 0px,#000 calc(146px + var(--dc-dt)),transparent calc(162px + var(--dc-dt)));mask-image:linear-gradient(180deg,#000 0px,#000 calc(146px + var(--dc-dt)),transparent calc(162px + var(--dc-dt)))}
+html.dc-standalone .nav-bg:not(.sheet-nav-bg) .nav-blur.b2{-webkit-mask-image:linear-gradient(180deg,transparent calc(140px + var(--dc-dt)),#000 calc(152px + var(--dc-dt)),transparent calc(166px + var(--dc-dt)));mask-image:linear-gradient(180deg,transparent calc(140px + var(--dc-dt)),#000 calc(152px + var(--dc-dt)),transparent calc(166px + var(--dc-dt)))}
+html.dc-standalone .search-layer{top:calc(59px + var(--dc-dt))}
+html.dc-standalone .brand-bg{height:calc(260px + var(--dc-dt))}
+html.dc-standalone .chat-host.page{top:calc(106px + var(--dc-dt))}
+html.dc-standalone .chat-host.sheet{top:calc(58px + var(--dc-dt))}
+html.dc-standalone .menu[role="menu"]{top:calc(107px + var(--dc-dt)) !important}
+html.dc-standalone div[role="dialog"][style*="top: 56px"]{top:calc(56px + var(--dc-dt)) !important}
+html.dc-standalone div[role="dialog"][style*="top: 163px"]{top:calc(163px + var(--dc-dt)) !important}
+/* bottom: tab bar, AI button, Save, chat input above the real home indicator */
+html.dc-standalone .tabbar,html.dc-standalone .ai-btn{bottom:calc(25px + var(--dc-db))}
+html.dc-standalone .bottom-fx{height:calc(128px + var(--dc-db))}
+html.dc-standalone .save-bar{bottom:calc(34px + var(--dc-db))}
+html.dc-standalone .composer-row{padding-bottom:calc(99px + var(--dc-db))}
+html.dc-standalone .composer-row.in-modal{padding-bottom:calc(44px + var(--dc-db))}
+/* Native iOS keyboard (standalone only). The simulated keyboard stays mounted for the app logic but is invisible
+   and takes no space; it still measures 32px, so the app's own ride-up/down animations resolve to a 0px shift.
+   The frame follows window.visualViewport (see script), so the input sits directly above the real keyboard. */
+html.dc-standalone .kb{height:32px !important;margin-top:-32px !important;padding:0 !important;border:0 !important;visibility:hidden !important;overflow:hidden !important;animation:none !important;pointer-events:none !important}
+html.dc-standalone .composer-row.above-kb{padding-bottom:calc(44px + var(--dc-db))}
+html.dc-standalone.dc-kb .composer-row,html.dc-standalone.dc-kb .composer-row.in-modal,html.dc-standalone.dc-kb .composer-row.above-kb{padding-bottom:12px}
+html.dc-standalone .dc-page{position:fixed;top:0;left:0;right:0}
+html.dc-standalone .history-list{padding-bottom:calc(48px + var(--dc-db))}
+html.dc-standalone .tx-page{padding-bottom:calc(48px + var(--dc-db))}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js" integrity="sha384-DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js" integrity="sha384-gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1" crossorigin="anonymous"></script>
@@ -25,17 +84,82 @@ html,body{margin:0;background:var(--app-bg,#F5F5F7);overflow-x:hidden}
 <script>
 (function () {
   var W = 430, H = 932;
+  var html = document.documentElement;
+  var standalone = html.classList.contains('dc-standalone');
+  var vv = window.visualViewport;
+  var page = document.querySelector('.dc-page');
   var slot = document.getElementById('dc-slot'), frame = document.getElementById('dc-frame');
-  // Uniform scale below 430px wide (never above 1), so the UI keeps its 430px coordinate system undistorted
+  // Uniform scale below 430px wide (never above 1), so the UI keeps its 430px coordinate system undistorted.
+  // Browser: fixed 430×932 frame. Installed Web App: the frame fills the visible screen height, which shrinks
+  // while the native keyboard is open (window.visualViewport); no keyboard height is assumed anywhere.
   function fit() {
-    var s = Math.min(1, document.documentElement.clientWidth / W);
+    var s = Math.min(1, html.clientWidth / W);
+    var fullH = html.clientHeight;
+    var visH = standalone ? (vv ? vv.height : window.innerHeight) : H * s;
+    var frameH = standalone ? visH / s : H;
+    var scrollers = standalone ? Array.prototype.slice.call(document.querySelectorAll('.chat-scroll')) : [];
+    var fromBottom = scrollers.map(function (el) { return el.scrollHeight - el.scrollTop - el.clientHeight; });
+    html.style.setProperty('--dc-scale', String(s));
+    if (standalone) {
+      html.style.setProperty('--dc-frame-h', frameH + 'px');
+      html.classList.toggle('dc-kb', !!vv && fullH - vv.height > 120);
+      // keep the app pinned to the visible area even if iOS pans the viewport towards the focused input
+      page.style.transform = vv && vv.offsetTop ? 'translateY(' + vv.offsetTop + 'px)' : '';
+      if (window.scrollY) window.scrollTo(0, 0);
+    }
     slot.style.width = W * s + 'px';
-    slot.style.height = H * s + 'px';
+    slot.style.height = frameH * s + 'px';
+    frame.style.height = frameH + 'px';
     frame.style.transform = s < 1 ? 'scale(' + s + ')' : '';
+    // the chat thread keeps its distance from the bottom, so the latest messages stay above the input
+    scrollers.forEach(function (el, i) { el.scrollTop = el.scrollHeight - el.clientHeight - fromBottom[i]; });
   }
   fit();
   window.addEventListener('resize', fit);
   window.addEventListener('orientationchange', fit);
+  if (standalone && vv) { vv.addEventListener('resize', fit); vv.addEventListener('scroll', fit); }
+  if (standalone) nativeKeyboard();
+
+  // Installed Web App: Chat and Search use real inputs with the native iOS keyboard
+  function nativeKeyboard() {
+    var root = document.getElementById('dc-root');
+    function prepareInputs() {
+      Array.prototype.forEach.call(root.querySelectorAll('input[inputmode="none"]'), function (el) {
+        var search = el.type === 'search';
+        el.setAttribute('inputmode', search ? 'search' : 'text');
+        el.setAttribute('enterkeyhint', search ? 'search' : 'send');
+      });
+    }
+    new MutationObserver(function (records) {
+      prepareInputs();
+      records.forEach(function (r) {
+        // the app closed its keyboard (e.g. tap on the thread): dismiss the native one too
+        var el = r.target;
+        if (r.type === 'attributes' && el.classList && el.classList.contains('composer-row') && !el.classList.contains('above-kb')) {
+          var input = el.querySelector('input');
+          if (input && document.activeElement === input) input.blur();
+        }
+      });
+    }).observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+    prepareInputs();
+    // the native keyboard was dismissed by iOS: let the app close its keyboard state the same way a tap on the thread does
+    root.addEventListener('focusout', function (e) {
+      var input = e.target;
+      if (!input.matches || !input.matches('.composer input')) return;
+      requestAnimationFrame(function () {
+        var row = input.closest('.composer-row');
+        if (document.activeElement === input || !row || !row.isConnected || !row.classList.contains('above-kb')) return;
+        var thread = row.parentNode && row.parentNode.querySelector('.chat-scroll');
+        if (thread) thread.click();
+      });
+    });
+    // Send keeps the input focused (the keyboard stays up), like the simulated keyboard
+    root.addEventListener('mousedown', function (e) { if (e.target.closest && e.target.closest('.send-btn')) e.preventDefault(); }, true);
+    // Search: the keyboard's Search key dismisses it, like the simulated Return key
+    root.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && e.target.matches && e.target.matches('.search-layer input')) { e.preventDefault(); e.target.blur(); }
+    });
+  }
 })();
 DCLite.mount(document.getElementById('dc-root'), 'Main');
 </script>

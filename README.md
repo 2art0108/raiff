@@ -26,7 +26,8 @@ The page loads components with `fetch`, so it must be served over HTTP. Opening 
 ## Project structure
 
 ```
-index.html                 Entry page: loads React, the runtime, mounts <Main>
+index.html                 Entry page: page wrapper, standalone/safe-area mode, loads React + runtime, mounts <Main>
+manifest.webmanifest       Web App manifest (standalone display)
 runtime/dc-lite.js         Template runtime ({{holes}}, sc-if, sc-for, dc-import, helmet, DCLogic)
 components/
   Main.dc.html             The whole app: styles (tokens, glass, nav), template and logic
@@ -35,11 +36,24 @@ assets/
   fonts/InterVariable.woff2          Inter 4.1 variable (UI text, cv11 single-storey a)
   fonts/SharpGrotesk-Medium20.otf    Large and compact titles
   images/*.svg                       Raiffeisen mark, status bar, home indicator, EUR/USD/BTC icons
+  images/merchants/*.png             Transaction logos (Amazon, Uber, Acme, Starbucks, …)
+  images/banks/*.png                 Bank logos (Bank of America, Ent Credit Union, …)
   images/lens-displacement.png       Liquid-glass displacement map (Settings button)
 scripts/
   build.mjs                Validation + dist/ output
   serve.mjs                Zero-dependency static server
 ```
+
+## Browser preview vs installed iOS Web App
+
+The same deployment switches mode automatically:
+
+- **Browser** (desktop or mobile Safari/Chrome): the prototype shows its own status bar and home indicator in the 430 × 932 frame, centred and scaled to fit narrow screens.
+- **Installed Web App** (Safari → Share → *Add to Home Screen*, then open from the icon): detected from `navigator.standalone` / `display-mode: standalone`. The fake status bar and home indicator are hidden, the frame fills the screen, and the nav bar, tab bar, AI button, Save button and chat input use the real `env(safe-area-inset-top/bottom)`. Gradients, blur and scrolling content run under the system areas (`black-translucent` status bar).
+
+- **Keyboard (experimental)**: in the browser the simulated iOS keyboard is used. In the installed Web App it is hidden and Chat / Search focus real inputs with the native iOS keyboard (emoji, dictation, languages, autocorrect). The app frame follows `window.visualViewport`, so the chat input sits directly above the keyboard and the thread resizes above it; no keyboard height is hard-coded.
+
+All standalone rules live in `index.html` under `html.dc-standalone`. The components are unchanged.
 
 Asset URLs are relative, so the site works from a domain root or a sub-path (e.g. GitHub Pages project sites).
 

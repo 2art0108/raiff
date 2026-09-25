@@ -45,6 +45,8 @@
 --page-inset:16px;
 /* Status bar (56) + nav bar (50): content starts below this and scrolls under it */
 --top-chrome:106px;
+/* Bottom Home area: the fake home indicator (32px); the installed Web App maps it to the real bottom safe area */
+--home-area:32px;
 /* Roles */
 --color-primary:var(--rbi-yellow);
 --color-on-primary:var(--rbi-black);
@@ -97,6 +99,8 @@ button:disabled{cursor:default}
 .pick-check{width:26px;height:26px;border-radius:50%;flex-shrink:0;margin-left:auto;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1.5px solid #C7C7CC;color:#FFFFFF}
 .pick-check.on{background:var(--rbi-black);border-color:var(--rbi-black)}
 .avatar.brand{width:56px;height:56px;background:var(--rbi-yellow);overflow:hidden}
+/* banks whose logo is already a full circular badge: no brand-yellow behind it (no yellow fringe at the edge) */
+.avatar.brand.badge{background:transparent}
 /* ---- Liquid Glass (TEST – applied to the Settings button only) ----
    L1 .lg-refract  geometric lens refraction: SVG displacement map (clear centre -> strong at the rim)
    L2 .lg-surface  very translucent neutral surface + light backdrop blur / saturation
@@ -136,8 +140,8 @@ button:disabled{cursor:default}
 .glass.glass--dark::before{content:'';position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;background:radial-gradient(120% 90% at 28% 8%,rgba(255,255,255,.2) 0%,rgba(255,255,255,.06) 38%,rgba(255,255,255,0) 60%),radial-gradient(90% 70% at 78% 100%,rgba(255,255,255,.07) 0%,rgba(255,255,255,0) 60%)}
 /* Bottom scroll-edge behind the tab bar: fades from the page colour at the bottom to clear above */
 .bottom-fx{position:absolute;left:0;right:0;bottom:0;height:128px;z-index:2;pointer-events:none;transition:opacity .25s ease}
-.bottom-fx::before{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(245,245,247,.62) 0%,rgba(245,245,247,.5) 30%,rgba(245,245,247,.24) 62%,rgba(245,245,247,0) 100%)}
-.bottom-fx::after{content:'';position:absolute;inset:0;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-mask-image:linear-gradient(0deg,#000 0%,#000 30%,transparent 90%);mask-image:linear-gradient(0deg,#000 0%,#000 30%,transparent 90%)}
+.bottom-fx::before,.composer-fx::before{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(245,245,247,.62) 0%,rgba(245,245,247,.5) 30%,rgba(245,245,247,.24) 62%,rgba(245,245,247,0) 100%)}
+.bottom-fx::after,.composer-fx::after{content:'';position:absolute;inset:0;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-mask-image:linear-gradient(0deg,#000 0%,#000 30%,transparent 90%);mask-image:linear-gradient(0deg,#000 0%,#000 30%,transparent 90%)}
 /* Shared navigation bar (all screens) */
 .navbar{position:absolute;top:0;left:0;right:0;z-index:4;height:var(--top-chrome);box-sizing:border-box;padding:56px var(--page-inset) 0;display:flex;align-items:center;gap:12px;background:transparent;isolation:isolate}
 /* Soft scroll-edge: solid under the status bar, fading to fully transparent at the bottom. No divider */
@@ -182,8 +186,13 @@ button:disabled{cursor:default}
 /* Bank Details sits on the branded colour: flat white circles */
 .nav-circle:focus-visible{outline:2px solid #2B2D33;outline-offset:2px}
 /* Bank details */
-.bank-screen{position:absolute;inset:0;z-index:1;overflow-y:auto;background:var(--app-bg)}
-.brand-bg{height:260px;background:var(--rbi-yellow)}
+.bank-screen{position:absolute;inset:0;z-index:1;overflow-x:hidden;overflow-y:auto;background:var(--app-bg)}
+/* Branded header: the colour is painted by an overscan layer 1px beyond the left, right and top edges, clipped by the
+   screen, so no subpixel seam of the page background can show at the screen edges (scaled / composited mobile
+   rendering). The bottom edge is the header's visible end, so it stays exactly at 260px. background:inherit takes the
+   bank's colour from the element (inline, per bank). z-index:-1 keeps it under the overlapping cards, as before. */
+.brand-bg{position:relative;z-index:-1;height:260px;background:var(--rbi-yellow)}
+.brand-bg::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;bottom:0;background:inherit}
 .bank-body{margin-top:-128px;padding:0 var(--page-inset) 64px;display:flex;flex-direction:column}
 .card.bank.bank-card.bank-hero{margin:0;border-radius:40px;min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;box-sizing:border-box}
 .bank-hero .avatar.brand{width:80px;height:80px}
@@ -241,7 +250,7 @@ button:disabled{cursor:default}
 .chat-host{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;background:#FFFFFF;box-sizing:border-box}
 .chat-host.page{top:106px;z-index:1}
 .chat-host.sheet.opening .composer{-webkit-backdrop-filter:none;backdrop-filter:none}
-.chat-host.sheet{will-change:transform;top:58px;z-index:6;border-top-left-radius:38px;border-top-right-radius:38px;border-bottom-left-radius:0;border-bottom-right-radius:0;padding-top:13px;overflow:hidden;box-shadow:0 -10px 40px rgba(0,0,0,.12);animation:sheet-up .44s cubic-bezier(.2,.9,.25,1) both}
+.chat-host.sheet{will-change:transform;top:58px;z-index:6;border-top-left-radius:38px;border-top-right-radius:38px;border-bottom-left-radius:0;border-bottom-right-radius:0;padding-top:13px;box-shadow:0 -10px 40px rgba(0,0,0,.12);animation:sheet-up .44s cubic-bezier(.2,.9,.25,1) both}
 .back-icon{transform:translateX(-1px)}
 /* Recent Chats: internal screen inside the chat sheet, pushed in from the right */
 .tx-row.tap{width:100%;border:0;background:transparent;font:inherit;color:inherit;text-align:left;cursor:pointer}
@@ -256,6 +265,11 @@ button:disabled{cursor:default}
 .nav-ghost > .stage{position:absolute;inset:0}
 .bar-ghost{position:absolute;top:0;left:0;right:0;height:var(--top-chrome);z-index:4;pointer-events:none}
 .sheet-stage{position:relative;flex-grow:1;min-height:0;display:flex;flex-direction:column;background:inherit}
+/* Chat sheet: Chromium ignores the masks of progressive-blur layers inside any rounded clip (overflow + border-radius or
+   clip-path round), so the sheet has no rounded clip. Its own background carries the rounded corners; the stage clips
+   square (the Recent Chats slide); the scroll areas round their own top corners inside the sheet's curve. */
+.chat-host.sheet .sheet-stage{overflow:hidden;background:transparent}
+.chat-host.sheet .chat-scroll,.chat-host.sheet .history-layer{border-top-left-radius:19px;border-top-right-radius:19px}
 .sheet-ghost{top:63px;bottom:0}
 .sheet-ghost > .sheet-stage{position:absolute;inset:0}
 .sheet-layer{position:absolute;inset:0;flex-direction:column;display:flex;will-change:transform;backface-visibility:hidden;contain:layout paint}
@@ -332,18 +346,21 @@ button:disabled{cursor:default}
 /* ---- Chat modal glass zones: same logic as the app nav bar / tab bar ---- */
 /* top: the modal nav bar floats over the content; sheet top (0) -> nav bar bottom (13 + 50px) */
 .chat-host.sheet .navbar.in-sheet{position:absolute;top:13px;left:0;right:0;z-index:3}
+/* Modal nav background = the Main nav-bg (gradient + 11.5px / 4.3px progressive blur), cut to its lower 63px so it sits
+   against the modal bar exactly as the Main one sits against the Main bar; top corners follow the sheet */
 .nav-bg.sheet-nav-bg{top:0;height:63px;z-index:2}
-.nav-bg.sheet-nav-bg .nav-blur{top:-40px;-webkit-mask-image:linear-gradient(180deg,#000 0px,#000 83px,transparent 99px);mask-image:linear-gradient(180deg,#000 0px,#000 83px,transparent 99px)}
-.nav-bg.sheet-nav-bg .nav-blur.b2{-webkit-mask-image:linear-gradient(180deg,transparent 77px,#000 89px,transparent 103px);mask-image:linear-gradient(180deg,transparent 77px,#000 89px,transparent 103px)}
+.nav-bg.sheet-nav-bg::before{border-radius:32px 32px 0 0;background:linear-gradient(180deg,rgba(245,245,247,.973) 0px,rgba(245,245,247,.97) 4.7px,rgba(245,245,247,.88) 24.8px,rgba(245,245,247,.62) 41.8px,rgba(245,245,247,.3) 53.5px,rgba(245,245,247,0) 63px)}
+.nav-bg.sheet-nav-bg .nav-blur{top:0;border-radius:32px 32px 0 0;-webkit-mask-image:linear-gradient(180deg,#000 0px,#000 43px,transparent 59px);mask-image:linear-gradient(180deg,#000 0px,#000 43px,transparent 59px)}
+.nav-bg.sheet-nav-bg .nav-blur.b2{-webkit-mask-image:linear-gradient(180deg,transparent 37px,#000 49px,transparent 63px);mask-image:linear-gradient(180deg,transparent 37px,#000 49px,transparent 63px)}
 .chat-thread{padding:24px var(--page-inset) 12px}
 .chat-host.sheet .chat-thread{padding-top:74px;padding-bottom:84px}
 .chat-host.sheet .history-list{padding-top:62px}
 /* bottom: the thread scrolls under the input; soft gradient + progressive blur behind it */
 .chat-host.sheet .chat-scroll{margin-bottom:-72px}
 .composer-row{position:relative;z-index:2}
-.composer-fx{position:absolute;left:0;right:0;top:-28px;bottom:0;z-index:-1;pointer-events:none}
-.composer-fx::before{content:'';position:absolute;inset:0;opacity:.88;background:linear-gradient(0deg,rgba(245,245,247,1) 0%,rgba(245,245,247,.95) 45%,rgba(245,245,247,.6) 75%,rgba(245,245,247,0) 100%)}
-.composer-fx::after{content:'';position:absolute;inset:0;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-mask-image:linear-gradient(0deg,#000 0%,#000 45%,transparent 95%);mask-image:linear-gradient(0deg,#000 0%,#000 45%,transparent 95%)}
+/* Chat input glass zone: the tab bar's scroll-edge layers (.bottom-fx); blur and tint reach zero 12px above the input,
+   the same as the input's gap to the keyboard */
+.composer-fx{position:absolute;left:0;right:0;top:-12px;bottom:0;z-index:-1;pointer-events:none}
 .chat-host.page .composer-fx{display:none}
 /* the input uses the nav-button glass: translucent white, blur, soft outer shadow, no rim */
 .composer.glass{--glass-tint:rgba(255,255,255,.8);--glass-saturate:1.1;--glass-brightness:1.02;box-shadow:var(--nav-btn-shadow)}
@@ -358,6 +375,11 @@ button:disabled{cursor:default}
 .send-btn{position:relative;width:36px;height:36px;border-radius:50%;border:0;background:var(--rbi-yellow);color:var(--rbi-black);display:flex;align-items:center;justify-content:center;padding:0}
 .send-ico{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);transition:opacity .18s ease,transform .22s ease}
 .send-ico.off{opacity:0;transform:translate(-50%,-50%) scale(.6)}
+/* Processing spinner: the arc turns about the circle's centre (9,9 in the 18x18 viewBox), inside the icon, so the
+   icon's own centring / cross-fade transform is untouched */
+.send-spin .arc{transform-box:view-box;transform-origin:9px 9px;animation:send-spin .8s linear infinite}
+@keyframes send-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.send-spin .arc{animation-duration:1.6s}}
 /* simulated AI processing */
 .ai-think{display:flex;align-items:center;gap:10px;padding:6px 2px;min-height:24px}
 .ai-dots{display:flex;align-items:center;gap:3.5px;height:12px}
@@ -388,6 +410,10 @@ button:disabled{cursor:default}
 .sel-ring.on{background:var(--rbi-black);border-color:var(--rbi-black)}
 .save-bar{position:absolute;left:41px;right:41px;bottom:34px;z-index:3;display:flex;justify-content:center;pointer-events:none;opacity:0;transform:translateY(24px);transition:opacity .22s ease,transform .32s cubic-bezier(.2,.9,.3,1)}
 .save-bar.show{opacity:1;transform:none}
+/* Select Bank list ends 24px above the Home area; while Save Connections shows (its top is 52px above the Home area)
+   the last bank can still scroll to 24px above the button */
+.select-list{padding-bottom:calc(var(--home-area) + 24px)}
+.select-list.saving{padding-bottom:calc(var(--home-area) + 76px)}
 .save-bar.show .save-btn{pointer-events:auto}
 .save-btn{width:100%;height:50px;border:0;border-radius:100px;background:var(--rbi-black);color:#FFFFFF;font-size:16px;font-weight:600;letter-spacing:.15px;box-shadow:0 8px 28px rgba(26,26,26,.18);-webkit-tap-highlight-color:transparent}
 
@@ -407,10 +433,13 @@ button:disabled{cursor:default}
 .search-btn.hide{visibility:hidden}
 
 .search-btn:focus-visible{outline:2px solid #2B2D33;outline-offset:2px}
+/* Search icon box is 21x22 so it sits on a whole pixel (11px) in the 44px field, like the 22px input; a 21px box would
+   sit at 11.5px and snap by a pixel on mobile when the field's move ends. The glyph itself is unchanged. The field also
+   stays on its own compositor layer (will-change), so its last animated frame and its resting frame are the same raster. */
 .search-btn svg,.search-layer .field svg{display:block;flex-shrink:0}
 .search-btn span{display:block;height:22px;line-height:22px;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .search-layer{position:absolute;left:var(--page-inset);right:var(--page-inset);top:59px;height:44px;z-index:5;display:flex;align-items:center;gap:8px;pointer-events:none}
-.search-layer .field{flex:1;min-width:0;height:44px;border-radius:22px;padding:0 14px 0 calc(50% - 39px);gap:6px;pointer-events:auto;background:#E7E8E9;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;transition:transform .28s cubic-bezier(.25,.9,.3,1),padding-left .28s cubic-bezier(.25,.9,.3,1),background-color .28s cubic-bezier(.25,.9,.3,1),box-shadow .28s cubic-bezier(.25,.9,.3,1)}
+.search-layer .field{flex:1;min-width:0;height:44px;border-radius:22px;padding:0 14px 0 calc(50% - 39px);gap:6px;pointer-events:auto;will-change:transform;background:#E7E8E9;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;transition:transform .28s cubic-bezier(.25,.9,.3,1),padding-left .28s cubic-bezier(.25,.9,.3,1),background-color .28s cubic-bezier(.25,.9,.3,1),box-shadow .28s cubic-bezier(.25,.9,.3,1)}
 .search-layer .field::before,.search-layer .field::after{transition:opacity .28s cubic-bezier(.25,.9,.3,1);opacity:0}
 .search-layer.on .field{padding-left:14px;background:var(--glass-tint);box-shadow:var(--glass-shadow);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness))}
 .search-layer.on .field::before,.search-layer.on .field::after{opacity:1}
@@ -507,7 +536,7 @@ button:disabled{cursor:default}
 <sc-for list="{{connectedBanks}}" as="b" hint-placeholder-count="1">
 <div class="card bank bank-card" style="border-radius: 20px">
 <button class="card-main" onClick="{{b.open}}">
-<span class="avatar brand"><img src="assets/images/raiffeisen-mark.svg" alt="Raiffeisen Bank logo" style="width: 56px; height: 56px; display: block; object-fit: contain"></span>
+<span class="avatar brand {{b.avatarCls}}"><img src="{{b.logo}}" alt="{{b.logoAlt}}" style="width: 56px; height: 56px; display: block; object-fit: contain"></span>
 <span style="display: flex; flex-direction: column"><span class="card-title">{{b.name}}</span><span class="card-sub">2 accounts</span></span>
 </button>
 </div>
@@ -517,11 +546,11 @@ button:disabled{cursor:default}
 </sc-if>
 
 <sc-if value="{{isSelect}}" hint-placeholder-val="{{false}}">
-<div class="noscroll" style="flex-grow: 1; min-height: 0; overflow-y: auto; padding: calc(var(--top-chrome) + 24px) var(--page-inset) 132px; display: flex; flex-direction: column; gap: var(--gap-list)">
+<div class="noscroll select-list {{selectListCls}}" style="flex-grow: 1; min-height: 0; overflow-y: auto; padding-top: calc(var(--top-chrome) + 24px); padding-left: var(--page-inset); padding-right: var(--page-inset); display: flex; flex-direction: column; gap: var(--gap-list)">
 <sc-for list="{{bankChoices}}" as="c" hint-placeholder-count="20">
 <div class="card bank bank-card">
 <button class="card-main" aria-pressed="{{c.pressed}}" onClick="{{c.toggle}}">
-<span class="avatar brand"><img src="assets/images/raiffeisen-mark.svg" alt="" style="width: 56px; height: 56px; display: block; object-fit: contain"></span>
+<span class="avatar brand {{c.avatarCls}}"><img src="{{c.logo}}" alt="" style="width: 56px; height: 56px; display: block; object-fit: contain"></span>
 <span style="display: flex; flex-direction: column; min-width: 0"><span class="card-title">{{c.name}}</span><span class="card-sub">{{c.status}}</span></span>
 <span class="pick-check {{c.checkCls}}"><sc-if value="{{c.connected}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if></span>
 </button>
@@ -538,12 +567,12 @@ button:disabled{cursor:default}
 
 <sc-if value="{{isAccount}}" hint-placeholder-val="{{false}}">
 <div class="tx-page noscroll {{txSearchCls}}">
-<button class="search-btn {{searchBtnCls}}" ref="{{searchBtnRef}}" aria-label="Search" onClick="{{openSearch}}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5l5 5"></path></svg><span>{{searchBtnLabel}}</span></button>
+<button class="search-btn {{searchBtnCls}}" ref="{{searchBtnRef}}" aria-label="Search" onClick="{{openSearch}}"><svg width="21" height="22" viewBox="0 -0.571429 24 25.142857" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5l5 5"></path></svg><span>{{searchBtnLabel}}</span></button>
 <sc-for list="{{txGroups}}" as="g" hint-placeholder-count="3">
 <h2 class="tx-date">{{g.label}}</h2>
 <div class="tx-group">
 <sc-for list="{{g.rows}}" as="t" hint-placeholder-count="3">
-<div class="tx-row {{t.rowCls}}"><span style="flex: 1; min-width: 0; display: block"><dc-import name="ListItem" heading="{{t.title}}" detail="{{t.sub}}" icon="{{t.icon}}" trailing="amount" amount="{{t.amount}}" hint-size="100%,48px"></dc-import></span></div>
+<div class="tx-row {{t.rowCls}}"><span style="flex: 1; min-width: 0; display: block"><dc-import name="ListItem" heading="{{t.title}}" detail="{{t.sub}}" icon="{{t.icon}}" icon-src="{{t.iconSrc}}" trailing="amount" amount="{{t.amount}}" hint-size="100%,48px"></dc-import></span></div>
 </sc-for>
 </div>
 </sc-for>
@@ -578,10 +607,10 @@ button:disabled{cursor:default}
 <!-- Bank details: branded top area scrolls with the page; nav bar floats above -->
 <sc-if value="{{isBank}}" hint-placeholder-val="{{false}}">
 <div class="bank-screen noscroll">
-<div class="brand-bg" aria-hidden="true"></div>
+<div class="brand-bg" aria-hidden="true" style="background: {{bankColor}}"></div>
 <div class="bank-body">
 <div class="card bank bank-card bank-hero" style="border-radius: 28px">
-<span class="avatar brand"><img src="assets/images/raiffeisen-mark.svg" alt="Raiffeisen Bank logo" style="width: 80px; height: 80px; display: block; object-fit: contain"></span>
+<span class="avatar brand {{bankAvatarCls}}"><img src="{{bankLogo}}" alt="{{bankLogoAlt}}" style="width: 80px; height: 80px; display: block; object-fit: contain"></span>
 <h2 class="bank-hero-name">{{bankName}}</h2>
 <span class="status-badge" style="padding-top: 4px">Active</span>
 </div>
@@ -622,7 +651,7 @@ button:disabled{cursor:default}
 <sc-if value="{{searchOpen}}" hint-placeholder-val="{{false}}">
 <div class="search-layer {{searchLayerCls}}">
 <label class="field glass" style="transform: translateY({{searchFieldY}}px)">
-<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5l5 5"></path></svg>
+<svg width="21" height="22" viewBox="0 -0.571429 24 25.142857" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5l5 5"></path></svg>
 <input type="search" aria-label="Search" placeholder="Search" autocomplete="off" inputmode="none" ref="{{searchInputRef}}" value="{{search}}" onChange="{{onSearch}}" onClick="{{openSearchKb}}">
 </label>
 <button class="nav-circle glass search-close" aria-label="Close search" onClick="{{closeSearch}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
@@ -688,8 +717,8 @@ button:disabled{cursor:default}
 </div>
 </div>
 <div class="composer-row {{kbRowCls}} {{composerModalCls}}" ref="{{composerRowRef}}">
-<span class="composer-fx" aria-hidden="true" style="height: 76px; top: -6px"></span>
-<label class="composer glass"><input aria-label="Message" placeholder="Ask the Assistant" ref="{{inputRef}}" inputmode="none" autocomplete="off" value="{{draft}}" onChange="{{onDraft}}" onKeyDown="{{onDraftKey}}" onClick="{{openKb}}"><span class="send-wrap {{sendCls}}" aria-hidden="{{sendHidden}}"><button class="send-btn" tabindex="{{sendTab}}" aria-label="{{sendLabel}}" onClick="{{sendOrStop}}"><svg class="send-ico {{sendIcoCls.send}}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"></path></svg><svg class="send-ico {{sendIcoCls.stop}}" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="0.5" y="0.5" width="11" height="11" rx="2.5" fill="currentColor"></rect></svg></button></span></label>
+<span class="composer-fx" aria-hidden="true"></span>
+<label class="composer glass"><input aria-label="Message" placeholder="Ask the Assistant" ref="{{inputRef}}" inputmode="none" autocomplete="off" value="{{draft}}" onChange="{{onDraft}}" onKeyDown="{{onDraftKey}}" onClick="{{openKb}}"><span class="send-wrap {{sendCls}}" aria-hidden="{{sendHidden}}"><button class="send-btn" tabindex="{{sendTab}}" aria-label="{{sendLabel}}" onClick="{{sendOrStop}}"><svg class="send-ico {{sendIcoCls.voice}}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 10.5v3M8 8v8M12 5v14M16 8v8M20 10.5v3"></path></svg><svg class="send-ico {{sendIcoCls.send}}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"></path></svg><svg class="send-ico send-spin {{sendIcoCls.spin}}" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-opacity=".22" stroke-width="2.2"></circle><path class="arc" d="M9 2a7 7 0 0 1 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg><svg class="send-ico {{sendIcoCls.stop}}" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="0.5" y="0.5" width="11" height="11" rx="2.5" fill="currentColor"></rect></svg></button></span></label>
 </div>
 <sc-if value="{{kbOpen}}" hint-placeholder-val="{{false}}">
 <div class="kb {{kbAnimCls}}" role="group" aria-label="Keyboard">
@@ -1000,17 +1029,18 @@ class Component extends DCLogic {
 
   // Placeholder transactions: 3 date groups (3, 5 and 2 rows). Amounts in the account currency
   txnsFor(acc) {
+    // [date, title, subtitle, amount, pending, brand logo]
     const rows = [
-      ['2026-09-12', 'Amazon Marketplace', 'Online shopping · Pending', -48.90, true],
-      ['2026-09-12', 'Uber', 'Transport · Pending', -14.20, true],
-      ['2026-09-12', 'Acme Consulting GmbH', 'Invoice INV-2041 · 09:15', 1250.00, false],
-      ['2026-09-11', 'Starbucks', 'Café · 18:42', -5.60, false],
-      ['2026-09-11', 'Google Workspace', 'Subscription · 14:05', -13.80, false],
-      ['2026-09-11', 'Northwind Traders', 'Payment received · 11:30', 420.00, false],
-      ['2026-09-11', 'Lidl', 'Groceries · 10:12', -36.45, false],
-      ['2026-09-11', 'Vodafone', 'Mobile plan · 08:00', -25.00, false],
-      ['2026-09-10', 'Spotify', 'Subscription · 21:10', -10.99, false],
-      ['2026-09-10', 'Globex Ltd', 'Payment received · 16:48', 880.00, false]
+      ['2026-09-12', 'Amazon Marketplace', 'Online shopping · Pending', -48.90, true, 'assets/images/merchants/amazon.png'],
+      ['2026-09-12', 'Lyft', 'Transport · Pending', -14.20, true, 'assets/images/merchants/lyft.png'],
+      ['2026-09-12', 'Acme Consulting GmbH', 'Invoice INV-2041 · 09:15', 1250.00, false, 'assets/images/merchants/acme.png'],
+      ['2026-09-11', 'Starbucks', 'Café · 18:42', -5.60, false, 'assets/images/merchants/starbucks.png'],
+      ['2026-09-11', 'Airbnb', 'Host payout · 11:30', 420.00, false, 'assets/images/merchants/airbnb.png'],
+      ['2026-09-11', 'Uber', 'Transport · 10:12', -36.45, false, 'assets/images/merchants/uber.png'],
+      ['2026-09-11', 'Mailchimp', 'Subscription · 08:00', -25.00, false, 'assets/images/merchants/mailchimp.png'],
+      ['2026-09-10', 'Instatus', 'Subscription · 21:10', -10.99, false, 'assets/images/merchants/instatus.png'],
+      ['2026-09-10', 'Reddit', 'Payment received · 16:48', 880.00, false, 'assets/images/merchants/reddit.png'],
+      ['2026-09-10', 'GitLab', 'Subscription · 09:30', -29.00, false, 'assets/images/merchants/gitlab.png']
     ];
     const btc = acc.cur === 'BTC';
     const fmt = (v) => {
@@ -1019,7 +1049,7 @@ class Component extends DCLogic {
       const sym = { EUR: '€', USD: '$', GBP: '£', UAH: '₴', BTC: '₿' }[acc.cur] || (acc.cur + ' ');
       return (v < 0 ? '−' : '+') + sym + n;
     };
-    return rows.map((r, i) => ({ id: acc.id + '-t' + i, date: r[0], title: r[1], sub: r[2], value: r[3], amount: fmt(r[3]), neg: r[3] < 0, pending: r[4] }));
+    return rows.map((r, i) => ({ id: acc.id + '-t' + i, date: r[0], title: r[1], sub: r[2], value: r[3], amount: fmt(r[3]), neg: r[3] < 0, pending: r[4], logo: r[5] }));
   }
 
   // Empty-state icons: the same paths as the tab bar icons (10×10 viewBox)
@@ -1140,7 +1170,7 @@ class Component extends DCLogic {
     this.scrollChat();
   }
   scrollChat() { const el = this._chatEl; if (el) requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; }); }
-  clearAi() { clearTimeout(this.botTimer); clearInterval(this.aiTicker); }
+  clearAi() { clearTimeout(this.botTimer); clearTimeout(this.procTimer); clearInterval(this.aiTicker); }
   startThinking() {
     this.clearAi();
     this.setState({ aiState: 'thinking', aiStep: 0 });
@@ -1165,21 +1195,36 @@ class Component extends DCLogic {
   stopThinking() { this.clearAi(); this.setState({ aiState: 'stopped' }); this.scrollChat(); }
 
   sendMessage() {
-    if (this.state.aiState === 'thinking') return;
+    if (this.state.aiState === 'thinking' || this.state.aiState === 'processing') return;
     const text = this.state.draft.trim();
     if (!text) return;
     const msgs = this.state.messages.concat([{ id: 'u' + Date.now(), from: 'me', text, time: this.now() }]);
-    this.setState({ messages: msgs, draft: '', aiState: null });
-    this.startThinking();
+    // the message shows at once; a short processing step (spinner in the button) comes before the thinking state
+    this.clearAi();
+    this.setState({ messages: msgs, draft: '', aiState: 'processing' });
+    this.scrollChat();
+    this.procTimer = setTimeout(() => this.startThinking(), 2000);
   }
 
   renderVals() {
     const TODAY = '2026-09-24';
     const st = this.state;
+    const btnMode = st.aiState === 'thinking' ? 'stop' : st.aiState === 'processing' ? 'spin' : (st.draft || '').length > 0 ? 'send' : 'voice';
     const accs = this.accounts();
     const acc = accs.find((a) => a.id === st.accountId) || accs[0];
-    const BANKS = [];
-    for (let i = 1; i <= 20; i++) BANKS.push({ id: 'rb' + i, name: i === 1 ? 'Raiffeisen Bank' : 'Raiffeisen Bank ' + i });
+    // Mock banks: Raiffeisen (mark on the brand-yellow circle) + full circular badge logos (badge: no yellow behind).
+    // color: the Bank Details header, taken from each logo file (dominant logo colour; Origin: its left segment)
+    const BANKS = [
+      { id: 'rb1', name: 'Raiffeisen Bank', logo: 'assets/images/raiffeisen-mark.svg', badge: false, color: 'var(--rbi-yellow)' },
+      { id: 'bofa', name: 'Bank of America', logo: 'assets/images/banks/bank-of-america.png', badge: true, color: '#E31837' },
+      { id: 'ent', name: 'Ent Credit Union', logo: 'assets/images/banks/ent-credit-union.png', badge: true, color: '#A73439' },
+      { id: 'independent', name: 'Independent Bank', logo: 'assets/images/banks/independent-bank.png', badge: true, color: '#172A54' },
+      { id: 'mechanics', name: 'Mechanics Bank', logo: 'assets/images/banks/mechanics-bank.png', badge: true, color: '#DD971A' },
+      { id: 'nearside', name: 'Nearside Business Checking', logo: 'assets/images/banks/nearside-business-checking.png', badge: true, color: '#62D0FF' },
+      { id: 'one', name: 'ONE', logo: 'assets/images/banks/one.png', badge: true, color: '#000000' },
+      { id: 'origin', name: 'Origin Bank', logo: 'assets/images/banks/origin-bank.png', badge: true, color: '#0F66B3' },
+      { id: 'tricounties', name: 'Tri Counties Bank', logo: 'assets/images/banks/tri-counties-bank.png', badge: true, color: '#EDAA00' }
+    ];
     const bankById = (id) => BANKS.find((b) => b.id === id);
     const ids = st.connectedIds;
     const hasBanks = ids.length > 0;
@@ -1221,7 +1266,7 @@ class Component extends DCLogic {
     txns.forEach((t) => {
       let g = txGroups.find((x) => x.key === t.date);
       if (!g) { const p = this.parts(t.date); g = { key: t.date, label: MONTHS[p.m] + ' ' + p.d, rows: [] }; txGroups.push(g); }
-      g.rows.push({ key: t.id, title: t.title, sub: t.sub, amount: t.amount, icon: t.neg ? 'out' : 'in', rowCls: g.rows.length ? 'divided' : '' });
+      g.rows.push({ key: t.id, title: t.title, sub: t.sub, amount: t.amount, icon: t.logo ? 'image' : (t.neg ? 'out' : 'in'), iconSrc: t.logo || '', rowCls: g.rows.length ? 'divided' : '' });
     });
 
     const inS = this.parseInput(st.inputStart), inE = this.parseInput(st.inputEnd);
@@ -1276,12 +1321,14 @@ class Component extends DCLogic {
       allSelectedAria: allSelected ? 'true' : 'false',
       toggleSelectAll: () => this.setState({ draftIds: allSelected ? [] : BANKS.map((b) => b.id) }),
       saveBarCls: dirty ? 'show' : '',
+      selectListCls: dirty ? 'saving' : '',
       saveHidden: dirty ? 'false' : 'true',
       saveTab: dirty ? '0' : '-1',
       saveConnections: () => { const next = (this.state.draftIds || []).slice(); this.navigate('app', 'back', () => this.setState({ connectedIds: next, draftIds: next, connView: 'root', menu: null })); },
       navCls: internal ? ('internal' + (!st.settings && st.connView === 'bank' ? ' overlay' : '')) : '',
       openSettings: () => this.navigate('app', 'fwd', () => this.setState({ settings: true, menu: null, kbOpen: false })),
       bankName: curBank.name,
+      bankColor: curBank.color || 'var(--rbi-yellow)', bankLogo: curBank.logo, bankLogoAlt: curBank.name + ' logo', bankAvatarCls: curBank.badge ? 'badge' : '',
       navTitle: st.settings ? 'Settings' : isSub ? (st.connView === 'select' ? 'Select Bank' : st.connView === 'bank' ? '' : acc.name) : (tab === 'chat' ? 'Assistant' : tab === 'payroll' ? 'Payroll' : tab === 'payments' ? 'Payments' : 'Connections'),
       navTitleCls: '',
       navTitleO: internal ? '1' : navO.toFixed(3),
@@ -1347,8 +1394,8 @@ class Component extends DCLogic {
       isBank: inConn && st.connView === 'bank',
       isSelect: inConn && st.connView === 'select',
       showBankList: inConn && st.connView === 'root' && hasBanks,
-      connectedBanks: ids.map((id) => { const b = bankById(id); return { key: id, name: b.name, open: () => this.navigate('app', 'fwd', () => this.setState({ connView: 'bank', bankId: id })) }; }),
-      bankChoices: BANKS.map((b) => { const on = draft.indexOf(b.id) !== -1; const saved = ids.indexOf(b.id) !== -1; return { key: b.id, name: b.name, connected: on, pressed: on ? 'true' : 'false', status: saved ? 'Connected' : '2 accounts', checkCls: on ? 'on' : '', toggle: () => toggleBank(b.id) }; }),
+      connectedBanks: ids.map((id) => { const b = bankById(id); return { key: id, name: b.name, logo: b.logo, logoAlt: b.name + ' logo', avatarCls: b.badge ? 'badge' : '', open: () => this.navigate('app', 'fwd', () => this.setState({ connView: 'bank', bankId: id })) }; }),
+      bankChoices: BANKS.map((b) => { const on = draft.indexOf(b.id) !== -1; const saved = ids.indexOf(b.id) !== -1; return { key: b.id, name: b.name, logo: b.logo, avatarCls: b.badge ? 'badge' : '', connected: on, pressed: on ? 'true' : 'false', status: saved ? 'Connected' : '2 accounts', checkCls: on ? 'on' : '', toggle: () => toggleBank(b.id) }; }),
       openSelect,
       showEmpty: !!em,
       emptyD1: emptyKey ? this.emptyIconPaths()[emptyKey][0] : '',
@@ -1492,8 +1539,9 @@ class Component extends DCLogic {
         return k ? [{ key: 's' + (k - 1), text: P[(k - 1) % 3], cls: 'st-out-' + ab }, cur] : [cur];
       })(),
       retryAi: () => this.startThinking(),
-      sendLabel: st.aiState === 'thinking' ? 'Stop response' : 'Send message',
-      sendIcoCls: { send: st.aiState === 'thinking' ? 'off' : '', stop: st.aiState === 'thinking' ? '' : 'off' },
+      // one persistent button: Voice (empty input, visual only) -> Send -> Processing spinner -> Stop
+      sendLabel: btnMode === 'stop' ? 'Stop response' : btnMode === 'spin' ? 'Sending' : btnMode === 'voice' ? 'Voice input' : 'Send message',
+      sendIcoCls: { voice: btnMode === 'voice' ? '' : 'off', send: btnMode === 'send' ? '' : 'off', spin: btnMode === 'spin' ? '' : 'off', stop: btnMode === 'stop' ? '' : 'off' },
       sendOrStop: () => (this.state.aiState === 'thinking' ? this.stopThinking() : this.sendMessage()),
       draft: st.draft,
       onDraft: (e) => this.setState({ draft: e.target.value }),
@@ -1529,9 +1577,9 @@ class Component extends DCLogic {
         }).catch(() => { this._kbClosing = false; });
       },
       kbHold: (e) => e.preventDefault(),
-      sendCls: st.draft.length > 0 || st.aiState === 'thinking' ? 'show' : '',
-      sendHidden: st.draft.length > 0 || st.aiState === 'thinking' ? 'false' : 'true',
-      sendTab: st.draft.length > 0 || st.aiState === 'thinking' ? '0' : '-1',
+      sendCls: 'show',
+      sendHidden: 'false',
+      sendTab: '0',
       send: () => this.sendMessage()
     };
     // Settings is its own internal screen: hide every tab's content and the tab bar
