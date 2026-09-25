@@ -11,7 +11,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SoftBees">
-<meta name="theme-color" content="#F5F5F7">
+<meta name="theme-color" content="#F7F7F9">
 <link rel="preload" href="assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/SharpGrotesk-Medium20.otf" as="font" type="font/otf" crossorigin>
 <script>
@@ -26,7 +26,7 @@
 <style>
 /* Hosting wrapper only: centres the fixed 430×932 prototype and scales it down to fit narrow viewports.
    Nothing inside #dc-root is changed. --app-bg comes from the prototype's own tokens. */
-html,body{margin:0;background:var(--app-bg,#F5F5F7);overflow-x:hidden}
+html,body{margin:0;background:var(--app-bg,#F7F7F9);overflow-x:hidden}
 .dc-page{display:flex;justify-content:center;align-items:flex-start;width:100%;overflow:hidden}
 .dc-slot{position:relative;flex:none;width:430px;height:932px}
 .dc-frame{position:absolute;left:0;top:0;width:430px;height:932px;transform-origin:0 0}
@@ -71,6 +71,11 @@ html.dc-standalone .kb{height:32px !important;margin-top:-32px !important;paddin
 html.dc-standalone .composer-row.above-kb{padding-bottom:calc(44px + var(--dc-db))}
 html.dc-standalone.dc-kb .composer-row,html.dc-standalone.dc-kb .composer-row.in-modal,html.dc-standalone.dc-kb .composer-row.above-kb{padding-bottom:12px}
 html.dc-standalone .dc-page{position:fixed;top:0;left:0;right:0}
+/* iOS 26+ fills the status bar area of a Home Screen web app from the colour of an opaque fixed element at the page's
+   top edge (otherwise a flat page-colour / frosted band). This layer gives it exactly the colour of what the prototype
+   shows there, so the screen continues behind the status bar without a seam. Only the status bar area; no UI moves. */
+.dc-topedge{display:none}
+html.dc-standalone .dc-topedge{display:block;position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top, 0px);z-index:2147483000;pointer-events:none;background:var(--dc-top-color, #F7F7F9)}
 html.dc-standalone .history-list{padding-bottom:calc(48px + var(--dc-db))}
 html.dc-standalone .tx-page{padding-bottom:calc(48px + var(--dc-db))}
 </style>
@@ -79,6 +84,7 @@ html.dc-standalone .tx-page{padding-bottom:calc(48px + var(--dc-db))}
 <script src="runtime/dc-lite.js"></script>
 </head>
 <body>
+<div class="dc-topedge" aria-hidden="true"></div>
 <div class="dc-page"><div class="dc-slot" id="dc-slot"><div class="dc-frame" id="dc-frame"><div id="dc-root"></div></div></div></div>
 <noscript>This prototype needs JavaScript.</noscript>
 <script>
@@ -114,17 +120,107 @@ html.dc-standalone .tx-page{padding-bottom:calc(48px + var(--dc-db))}
     // the chat thread keeps its distance from the bottom, so the latest messages stay above the input
     scrollers.forEach(function (el, i) { el.scrollTop = el.scrollHeight - el.clientHeight - fromBottom[i]; });
   }
+  // Search transition hold (installed Web App): while the 0.28s Search field move runs, the native keyboard is opening or
+  // closing at the same time. Instead of resizing the whole app on every visualViewport frame (which competes with the
+  // animation), the final layout is applied once, after the viewport has settled and the transition has finished.
+  var searchHoldUntil = 0, settleTimer = 0;
+  function searchActive() {
+    var a = document.activeElement;
+    return performance.now() < searchHoldUntil || !!(a && a.matches && a.matches('.search-layer input'));
+  }
+  function settledFit() {
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(function wait() {
+      var left = searchHoldUntil - performance.now();
+      if (left > 0) { settleTimer = setTimeout(wait, left); return; }
+      fit();
+    }, 150);
+  }
+  function onViewport() { if (standalone && searchActive()) settledFit(); else fit(); }
+  function holdForSearch() { searchHoldUntil = performance.now() + 400; settledFit(); }
   fit();
-  window.addEventListener('resize', fit);
+  window.addEventListener('resize', onViewport);
   window.addEventListener('orientationchange', fit);
-  if (standalone && vv) { vv.addEventListener('resize', fit); vv.addEventListener('scroll', fit); }
+  if (standalone && vv) { vv.addEventListener('resize', onViewport); vv.addEventListener('scroll', onViewport); }
   if (standalone) nativeKeyboard();
+  if (standalone) statusBarColour();
+
+  // Installed Web App: colour of the screen right under the status bar -> top-edge layer + theme-color
+  function statusBarColour() {
+    var root = document.getElementById('dc-root');
+    var meta = document.querySelector('meta[name="theme-color"]');
+    var PAGE = [247, 247, 249];
+    var last = '';
+    function rgb(str) { var m = /rgba?\(([^)]+)\)/.exec(str || ''); return m ? m[1].split(',').map(Number) : null; }
+    function update() {
+      var base = PAGE;
+      var brand = root.querySelector('.bank-screen .brand-bg');
+      var bankScroll = brand && brand.closest('.bank-screen');
+      // Bank Details: the wallpaper, while it is still under the status bar
+      if (brand && bankScroll.scrollTop < brand.offsetHeight) base = rgb(getComputedStyle(brand).backgroundColor) || PAGE;
+      var c = base.slice(0, 3);
+      // Chat sheet open: the page seen through the dim overlay (follows its fade)
+      var dim = root.querySelector('.sheet-dim');
+      if (dim) {
+        var d = rgb(getComputedStyle(dim).backgroundColor);
+        var a = (d && d.length > 3 ? d[3] : 0.3) * parseFloat(getComputedStyle(dim).opacity || '1');
+        c = c.map(function (v) { return v * (1 - a); });
+      }
+      var hex = '#' + c.map(function (v) { var h = Math.round(v).toString(16); return h.length < 2 ? '0' + h : h; }).join('');
+      if (hex === last) return;
+      last = hex;
+      html.style.setProperty('--dc-top-color', hex);
+      if (meta) meta.setAttribute('content', hex);
+    }
+    // follow changes for a moment (screen pushes, dim fade), then settle
+    var until = 0;
+    function follow() {
+      var idle = !until;
+      until = performance.now() + 700;
+      if (!idle) return;
+      (function tick() { if (performance.now() >= searchHoldUntil) update(); if (performance.now() < until) requestAnimationFrame(tick); else until = 0; })();
+    }
+    new MutationObserver(follow).observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+    root.addEventListener('scroll', follow, true);
+    follow();
+  }
 
   // Installed Web App: Chat and Search use real inputs with the native iOS keyboard
   function nativeKeyboard() {
     var root = document.getElementById('dc-root');
+    // EXPERIMENTAL: iOS adds its form accessory bar (previous / next / Done) above the keyboard and offers no web API to
+    // remove it. Focusing the Chat input with inputmode="none" and switching to "text" a moment later can keep iOS from
+    // attaching the bar; unofficial and not guaranteed on every iOS version. Set to false to disable.
+    var HIDE_CHAT_ACCESSORY_BAR = true;
+    // follow the visual viewport every frame while the keyboard slides in or out, instead of waiting for iOS to report
+    // the final size, so the Chat input stays directly above whatever covers the screen (keyboard, and the bar if shown)
+    var followUntil = 0;
+    function followViewport() {
+      var start = !followUntil || performance.now() > followUntil;
+      followUntil = performance.now() + 800;
+      if (!start) return;
+      (function tick() {
+        fit();
+        if (performance.now() < followUntil) requestAnimationFrame(tick); else followUntil = 0;
+      })();
+    }
+    root.addEventListener('focusin', function (e) {
+      var input = e.target;
+      if (!input.matches || !input.matches('.composer input, .search-layer input')) return;
+      if (input.matches('.search-layer input')) { holdForSearch(); return; }
+      if (HIDE_CHAT_ACCESSORY_BAR && input.matches('.composer input') && !input.__dcBarTrick) {
+        input.__dcBarTrick = true;
+        input.setAttribute('inputmode', 'none');
+        setTimeout(function () { input.setAttribute('inputmode', 'text'); input.__dcBarTrick = false; }, 100);
+      }
+      followViewport();
+    });
+    root.addEventListener('focusout', function (e) {
+      if (e.target.matches && e.target.matches('.search-layer input')) holdForSearch(); else followViewport();
+    });
     function prepareInputs() {
       Array.prototype.forEach.call(root.querySelectorAll('input[inputmode="none"]'), function (el) {
+        if (el.__dcBarTrick) return;
         var search = el.type === 'search';
         el.setAttribute('inputmode', search ? 'search' : 'text');
         el.setAttribute('enterkeyhint', search ? 'search' : 'send');

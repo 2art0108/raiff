@@ -26,10 +26,13 @@
 --rbi-light-green:#A9C7B7;
 --rbi-pale-green:#DDE9E2;
 /* App surface: subtle light cool grey, used by every screen */
---app-bg:#F5F5F7;
+--app-bg:#F7F7F9;
 --radius-card:20px;
+/* Cards: gentle separation from the page (bank cards, Bank Details account / card rows) */
+--card-shadow:0 8px 32px 0 rgba(0,0,0,.055);
+--card-hairline:#00000014;
 /* Gap between repeated cards in a list (source: bank cards on Connections) */
---gap-list:15px;
+--gap-list:13px;
 /* Glass surface tokens (tune globally) */
 --glass-tint:rgba(255,255,255,.1);
 --glass-blur:10px;
@@ -80,7 +83,7 @@ button:disabled{cursor:default}
 .card.bank .card-title{font-size:18px;font-weight:600}
 .card.bank .card-sub{color:#6B6B70}
 /* Shared bank card (Connections + Select Bank) */
-.card.bank.bank-card{flex-shrink:0;margin:0;border-radius:20px;border:0.5px solid #00000014;background:#FFFFFF;box-shadow:0 8px 32px 0 #00000014}
+.card.bank.bank-card{flex-shrink:0;margin:0;border-radius:20px;border:0.5px solid var(--card-hairline);background:#FFFFFF;box-shadow:var(--card-shadow)}
 .connect-btn{flex-shrink:0;margin:calc(24px - var(--gap-list)) 0 0;border:0;background:#E7E8E9;border-radius:20px;display:flex;align-items:center;gap:18px;padding:20px 24px 20px 21px;text-align:left;color:var(--rbi-black);font-size:18px;font-weight:600;letter-spacing:.15px;-webkit-tap-highlight-color:transparent}
 
 
@@ -140,7 +143,7 @@ button:disabled{cursor:default}
 .glass.glass--dark::before{content:'';position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;background:radial-gradient(120% 90% at 28% 8%,rgba(255,255,255,.2) 0%,rgba(255,255,255,.06) 38%,rgba(255,255,255,0) 60%),radial-gradient(90% 70% at 78% 100%,rgba(255,255,255,.07) 0%,rgba(255,255,255,0) 60%)}
 /* Bottom scroll-edge behind the tab bar: fades from the page colour at the bottom to clear above */
 .bottom-fx{position:absolute;left:0;right:0;bottom:0;height:128px;z-index:2;pointer-events:none;transition:opacity .25s ease}
-.bottom-fx::before,.composer-fx::before{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(245,245,247,.62) 0%,rgba(245,245,247,.5) 30%,rgba(245,245,247,.24) 62%,rgba(245,245,247,0) 100%)}
+.bottom-fx::before,.composer-fx::before{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(247,247,249,.62) 0%,rgba(247,247,249,.5) 30%,rgba(247,247,249,.24) 62%,rgba(247,247,249,0) 100%)}
 .bottom-fx::after,.composer-fx::after{content:'';position:absolute;inset:0;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);-webkit-mask-image:linear-gradient(0deg,#000 0%,#000 30%,transparent 90%);mask-image:linear-gradient(0deg,#000 0%,#000 30%,transparent 90%)}
 /* Shared navigation bar (all screens) */
 .navbar{position:absolute;top:0;left:0;right:0;z-index:4;height:var(--top-chrome);box-sizing:border-box;padding:56px var(--page-inset) 0;display:flex;align-items:center;gap:12px;background:transparent;isolation:isolate}
@@ -149,7 +152,7 @@ button:disabled{cursor:default}
    both confined to the status bar + nav bar area (106px).
    Gradient: page colour 100% at the top -> 0% at the bar's bottom edge, whole layer at 88% opacity. */
 .nav-bg{position:absolute;top:0;left:0;right:0;height:var(--top-chrome);z-index:2;pointer-events:none;isolation:isolate}
-.nav-bg::before{content:'';position:absolute;inset:0;z-index:1;opacity:.88;background:linear-gradient(180deg,rgba(245,245,247,1) 0%,rgba(245,245,247,.97) 45%,rgba(245,245,247,.88) 64%,rgba(245,245,247,.62) 80%,rgba(245,245,247,.3) 91%,rgba(245,245,247,0) 100%)}
+.nav-bg::before{content:'';position:absolute;inset:0;z-index:1;opacity:.88;background:linear-gradient(180deg,rgba(247,247,249,1) 0%,rgba(247,247,249,.97) 45%,rgba(247,247,249,.88) 64%,rgba(247,247,249,.62) 80%,rgba(247,247,249,.3) 91%,rgba(247,247,249,0) 100%)}
 .nav-bg.overlay{display:none}
 /* Progressive blur: 11.5px through the status bar and title line, handing over to 4.3px, reaching zero at the bar's
    bottom edge. The layer starts 60px above the screen so its own top edge is never visible (no wave artifact). */
@@ -193,15 +196,15 @@ button:disabled{cursor:default}
    bank's colour from the element (inline, per bank). z-index:-1 keeps it under the overlapping cards, as before. */
 .brand-bg{position:relative;z-index:-1;height:260px;background:var(--rbi-yellow)}
 .brand-bg::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;bottom:0;background:inherit}
-.bank-body{margin-top:-128px;padding:0 var(--page-inset) 64px;display:flex;flex-direction:column}
+.bank-body{margin-top:-136px;padding:0 var(--page-inset) 64px;display:flex;flex-direction:column}
 .card.bank.bank-card.bank-hero{margin:0;border-radius:40px;min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;box-sizing:border-box}
 .bank-hero .avatar.brand{width:80px;height:80px}
-.bank-hero-name{margin:20px 0 0;font-size:24px;line-height:30px;font-weight:600;color:var(--rbi-black);text-align:center}
+.bank-hero-name{margin:16px 0 0;font-size:24px;line-height:30px;font-weight:600;color:var(--rbi-black);text-align:center}
 .status-badge{margin-top:10px;padding:3px 10px;border-radius:100px;background:#B6F5A6;color:var(--rbi-black);font-size:12px;line-height:16px;font-weight:500;letter-spacing:.03em;text-transform:uppercase}
 .section-title{margin:24px 0 12px;padding-left:4px;font-size:18px;line-height:24px;font-weight:600;color:var(--rbi-black)}
 .section-title.cards{margin-top:20px}
 .acc-list{display:flex;flex-direction:column;gap:var(--gap-list)}
-.acc-card{flex-shrink:0;width:100%;border:0;border-radius:var(--radius-card);background:#FFFFFF;display:flex;align-items:center;gap:12px;padding:16px 20px;text-align:left;color:var(--rbi-black);-webkit-tap-highlight-color:transparent}
+.acc-card{flex-shrink:0;width:100%;box-sizing:border-box;border:0.5px solid var(--card-hairline);border-radius:var(--radius-card);background:#FFFFFF;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:12px;padding:16px 20px;text-align:left;color:var(--rbi-black);-webkit-tap-highlight-color:transparent}
 
 .acc-card:focus-visible{outline:2px solid #2B2D33;outline-offset:2px}
 .topnav-btn{width:44px;height:44px;border-radius:50%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:var(--rbi-black);padding:0;-webkit-tap-highlight-color:transparent}
@@ -314,6 +317,15 @@ button:disabled{cursor:default}
 .scrim{position:absolute;inset:0;z-index:4;border:0;padding:0;background:rgba(0,0,0,.45);cursor:default}
 .scrim-clear{position:absolute;inset:0;z-index:4;border:0;padding:0;background:transparent;cursor:default}
 .menu{position:absolute;z-index:5;min-width:180px;background:#FFFFFF;border-radius:20px;padding:8px 0;overflow:hidden;box-shadow:0 8px 32px 0 #00000014;display:flex;flex-direction:column}
+/* Popover (Bank Details "More"): unfolds from its trigger button (22px in from the right edge, 26px above the top) with a
+   subtle scale-up, a slight downward drift and a soft spring settle; closing reverses toward the button. Transform and
+   opacity only; the resting state is untouched. */
+.menu{transform-origin:calc(100% - 22px) -26px;animation:menu-in-t .42s cubic-bezier(.3,1.28,.5,1) both,menu-in-o .16s ease-out both}
+.menu.closing{pointer-events:none;animation:menu-out .19s cubic-bezier(.4,0,.7,.2) both}
+@keyframes menu-in-t{from{transform:translateY(-6px) scale(.86)}to{transform:none}}
+@keyframes menu-in-o{from{opacity:0}to{opacity:1}}
+@keyframes menu-out{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-4px) scale(.9)}}
+@media (prefers-reduced-motion:reduce){.menu,.menu.closing{animation-duration:.01s}}
 .menu-item{height:48px;border:0;background:transparent;text-align:left;padding:0 20px;font-size:17px;color:#1D1B20;letter-spacing:.2px}
 
 .text-btn{height:40px;border:0;background:transparent;border-radius:20px;padding:0 14px;font-size:15px;font-weight:600;color:#1D1B20;letter-spacing:.1px}
@@ -349,7 +361,7 @@ button:disabled{cursor:default}
 /* Modal nav background = the Main nav-bg (gradient + 11.5px / 4.3px progressive blur), cut to its lower 63px so it sits
    against the modal bar exactly as the Main one sits against the Main bar; top corners follow the sheet */
 .nav-bg.sheet-nav-bg{top:0;height:63px;z-index:2}
-.nav-bg.sheet-nav-bg::before{border-radius:32px 32px 0 0;background:linear-gradient(180deg,rgba(245,245,247,.973) 0px,rgba(245,245,247,.97) 4.7px,rgba(245,245,247,.88) 24.8px,rgba(245,245,247,.62) 41.8px,rgba(245,245,247,.3) 53.5px,rgba(245,245,247,0) 63px)}
+.nav-bg.sheet-nav-bg::before{border-radius:32px 32px 0 0;background:linear-gradient(180deg,rgba(247,247,249,.973) 0px,rgba(247,247,249,.97) 4.7px,rgba(247,247,249,.88) 24.8px,rgba(247,247,249,.62) 41.8px,rgba(247,247,249,.3) 53.5px,rgba(247,247,249,0) 63px)}
 .nav-bg.sheet-nav-bg .nav-blur{top:0;border-radius:32px 32px 0 0;-webkit-mask-image:linear-gradient(180deg,#000 0px,#000 43px,transparent 59px);mask-image:linear-gradient(180deg,#000 0px,#000 43px,transparent 59px)}
 .nav-bg.sheet-nav-bg .nav-blur.b2{-webkit-mask-image:linear-gradient(180deg,transparent 37px,#000 49px,transparent 63px);mask-image:linear-gradient(180deg,transparent 37px,#000 49px,transparent 63px)}
 .chat-thread{padding:24px var(--page-inset) 12px}
@@ -369,7 +381,9 @@ button:disabled{cursor:default}
 .composer input{flex:1;border:0;background:transparent;font-size:18px;color:#1D1B20;outline:none;font-family:inherit;min-width:0}
 .composer input::placeholder{color:#8A8A8F}
 .composer{position:relative}
-.composer input{padding-right:40px}
+/* explicit box for the chat input: browsers (desktop Chrome vs iOS Safari) differ in default input padding/appearance,
+   which moved the placeholder ~4px on iPhone; these are the desktop values, now the same everywhere */
+.composer input{padding:1px 40px 1px 2px;margin:0;-webkit-appearance:none;appearance:none;border-radius:0;text-indent:0}
 .send-wrap{position:absolute;right:7px;top:50%;width:36px;height:36px;margin-top:-18px;opacity:0;transform:scale(.6);pointer-events:none;transition:opacity .2s ease,transform .26s cubic-bezier(.3,1.3,.5,1)}
 .send-wrap.show{opacity:1;transform:none;pointer-events:auto}
 .send-btn{position:relative;width:36px;height:36px;border-radius:50%;border:0;background:var(--rbi-yellow);color:var(--rbi-black);display:flex;align-items:center;justify-content:center;padding:0}
@@ -439,14 +453,31 @@ button:disabled{cursor:default}
 .search-btn svg,.search-layer .field svg{display:block;flex-shrink:0}
 .search-btn span{display:block;height:22px;line-height:22px;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .search-layer{position:absolute;left:var(--page-inset);right:var(--page-inset);top:59px;height:44px;z-index:5;display:flex;align-items:center;gap:8px;pointer-events:none}
-.search-layer .field{flex:1;min-width:0;height:44px;border-radius:22px;padding:0 14px 0 calc(50% - 39px);gap:6px;pointer-events:auto;will-change:transform;background:#E7E8E9;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;transition:transform .28s cubic-bezier(.25,.9,.3,1),padding-left .28s cubic-bezier(.25,.9,.3,1),background-color .28s cubic-bezier(.25,.9,.3,1),box-shadow .28s cubic-bezier(.25,.9,.3,1)}
-.search-layer .field::before,.search-layer .field::after{transition:opacity .28s cubic-bezier(.25,.9,.3,1);opacity:0}
-.search-layer.on .field{padding-left:14px;background:var(--glass-tint);box-shadow:var(--glass-shadow);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness))}
+/* Search field transition: compositor-only (transform / scale / opacity), no layout and no animated clip.
+   - the field has one fixed box (the 398px row) with a fixed clip at its final 346px shape, so nothing about its shape
+     changes during or after the move (an animated clip-path repaints on the main thread and can land after the move)
+   - the start's full-width grey pill is its own layer outside the clip: it shrinks to the final width with scale while
+     it fades out, as the Close button slides in
+   - icon + placeholder move as one row with transform (start offset 146px = 50% - 39px - 14px of the 398px row)
+   - the glass tint fades in inside the field; the glass shadow is its own layer outside the clip
+   Every element is the same before, during and after the move; nothing changes when it ends. */
+.search-layer .field{flex:1;min-width:0;height:44px;border-radius:22px;padding:0 14px;gap:0;pointer-events:auto;will-change:transform;background:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;clip-path:inset(0 52px 0 0 round 22px);transition:transform .28s cubic-bezier(.25,.9,.3,1)}
+.search-layer .field::before,.search-layer .field::after{right:52px;transition:opacity .28s cubic-bezier(.25,.9,.3,1);opacity:0}
+.search-layer.on .field{background:transparent;box-shadow:none;-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness))}
 .search-layer.on .field::before,.search-layer.on .field::after{opacity:1}
+.search-layer .field > .sf-bg{position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;transition:opacity .28s cubic-bezier(.25,.9,.3,1)}
+.search-layer .field > .sf-tint{background:var(--glass-tint);opacity:0}
+.search-layer.on .field > .sf-tint{opacity:1}
+.search-layer .sf-solid{position:absolute;left:0;top:0;width:100%;height:44px;border-radius:22px;background:#E7E8E9;opacity:1;scale:1 1;transform-origin:0 50%;pointer-events:none;will-change:transform,opacity;transition:transform .28s cubic-bezier(.25,.9,.3,1),scale .28s cubic-bezier(.25,.9,.3,1),opacity .28s cubic-bezier(.25,.9,.3,1)}
+.search-layer.on .sf-solid{opacity:0;scale:.869347 1}
+.search-layer .sf-shadow{position:absolute;left:0;top:0;width:calc(100% - 52px);height:44px;border-radius:22px;box-shadow:var(--glass-shadow);opacity:0;pointer-events:none;will-change:transform,opacity;transition:transform .28s cubic-bezier(.25,.9,.3,1),opacity .28s cubic-bezier(.25,.9,.3,1)}
+.search-layer.on .sf-shadow{opacity:1}
+.search-layer .field > .sf-row{flex:1;min-width:0;display:flex;align-items:center;gap:6px;margin-right:52px;will-change:transform;transform:translateX(146px);transition:transform .28s cubic-bezier(.25,.9,.3,1)}
+.search-layer.on .field > .sf-row{transform:none}
 .search-layer .field svg{color:#8A8A8F;flex-shrink:0}
-.search-layer .field input{display:block;height:22px;line-height:22px;font-size:17px;padding:0;margin:0}
-.search-layer .search-close{flex-shrink:0;width:44px;height:44px;margin-right:-52px;opacity:0;transform:scale(.6);pointer-events:auto;transition:margin-right .28s cubic-bezier(.25,.9,.3,1),opacity .22s ease,transform .28s cubic-bezier(.25,.9,.3,1)}
-.search-layer.on .search-close{margin-right:0;opacity:1;transform:none}
+.search-layer .field input{display:block;flex:1;min-width:0;height:22px;line-height:22px;font-size:17px;padding:0;margin:0}
+.search-layer .search-close{position:absolute;right:0;top:0;z-index:1;width:44px;height:44px;margin:0;opacity:0;transform:translateX(52px) scale(.6);pointer-events:auto;will-change:transform,opacity;transition:opacity .22s ease,transform .28s cubic-bezier(.25,.9,.3,1)}
+.search-layer.on .search-close{opacity:1;transform:none}
 /* nav content (Back, title, Filter) exits/enters as ONE layer: the nav bar container itself moves, so all three share
    exactly the same transform, timing and easing (the background gradient/blur is a separate layer and stays put) */
 .navbar.search-session{transition:transform .28s cubic-bezier(.25,.9,.3,1),opacity .22s ease}
@@ -455,7 +486,7 @@ button:disabled{cursor:default}
 .tx-page{transition:transform .28s cubic-bezier(.25,.9,.3,1)}
 .tx-page.search-up{transform:translateY(-59px)}
 .kb-dock{position:absolute;left:0;right:0;bottom:0;z-index:6}
-@media (prefers-reduced-motion:reduce){.search-layer .field,.search-layer .search-close,.navbar.search-session,.tx-page{transition:none}}
+@media (prefers-reduced-motion:reduce){.search-layer .field,.search-layer .field > .sf-bg,.search-layer .sf-solid,.search-layer .field > .sf-row,.search-layer .sf-shadow,.search-layer .search-close,.navbar.search-session,.tx-page{transition:none}}
 .filter-row{flex-shrink:0;display:flex;align-items:center;gap:8px;margin-top:14px}
 .chip{height:36px;border:0;border-radius:100px;background:#E7E8E9;color:var(--rbi-black);display:inline-flex;align-items:center;gap:8px;padding:0 14px 0 11px;font-size:15px;font-weight:500;letter-spacing:.1px;-webkit-tap-highlight-color:transparent}
 
@@ -537,7 +568,7 @@ button:disabled{cursor:default}
 <div class="card bank bank-card" style="border-radius: 20px">
 <button class="card-main" onClick="{{b.open}}">
 <span class="avatar brand {{b.avatarCls}}"><img src="{{b.logo}}" alt="{{b.logoAlt}}" style="width: 56px; height: 56px; display: block; object-fit: contain"></span>
-<span style="display: flex; flex-direction: column"><span class="card-title">{{b.name}}</span><span class="card-sub">2 accounts</span></span>
+<span style="display: flex; flex-direction: column"><span class="card-title">{{b.name}}</span><span class="card-sub">{{b.sub}}</span></span>
 </button>
 </div>
 </sc-for>
@@ -620,12 +651,14 @@ button:disabled{cursor:default}
 <button class="acc-card" onClick="{{acc.open}}"><span style="flex: 1; min-width: 0; display: block"><dc-import name="ListItem" heading="{{acc.name}}" detail="{{acc.sub}}" icon="{{acc.icon}}" icon-src="{{acc.iconSrc}}" trailing="chevron" hint-size="100%,48px"></dc-import></span></button>
 </sc-for>
 </div>
+<sc-if value="{{hasCards}}" hint-placeholder-val="{{true}}">
 <h3 class="section-title cards">Cards</h3>
 <div class="acc-list">
 <sc-for list="{{cardItems}}" as="acc" hint-placeholder-count="1">
-<button class="acc-card" onClick="{{acc.open}}"><span style="flex: 1; min-width: 0; display: block"><dc-import name="ListItem" heading="{{acc.name}}" detail="{{acc.sub}}" icon="{{acc.icon}}" icon-src="{{acc.iconSrc}}" trailing="chevron" hint-size="100%,48px"></dc-import></span></button>
+<button class="acc-card" onClick="{{acc.open}}"><span style="flex: 1; min-width: 0; display: block"><dc-import name="ListItem" heading="{{acc.name}}" detail="{{acc.sub}}" icon="{{acc.icon}}" icon-src="{{acc.iconSrc}}" badge-src="{{acc.badgeSrc}}" trailing="chevron" hint-size="100%,48px"></dc-import></span></button>
 </sc-for>
 </div>
+</sc-if>
 </div>
 </div>
 </sc-if>
@@ -650,10 +683,12 @@ button:disabled{cursor:default}
 <!-- Transactions search (active): field rises into the nav bar, Close on the right, keyboard docked at the bottom -->
 <sc-if value="{{searchOpen}}" hint-placeholder-val="{{false}}">
 <div class="search-layer {{searchLayerCls}}">
-<label class="field glass" style="transform: translateY({{searchFieldY}}px)">
+<span class="sf-shadow" aria-hidden="true" style="transform: translateY({{searchFieldY}}px)"></span>
+<span class="sf-solid" aria-hidden="true" style="transform: translateY({{searchFieldY}}px)"></span>
+<label class="field glass" style="transform: translateY({{searchFieldY}}px)"><span class="sf-bg sf-tint" aria-hidden="true"></span><span class="sf-row">
 <svg width="21" height="22" viewBox="0 -0.571429 24 25.142857" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5l5 5"></path></svg>
 <input type="search" aria-label="Search" placeholder="Search" autocomplete="off" inputmode="none" ref="{{searchInputRef}}" value="{{search}}" onChange="{{onSearch}}" onClick="{{openSearchKb}}">
-</label>
+</span></label>
 <button class="nav-circle glass search-close" aria-label="Close search" onClick="{{closeSearch}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
 </div>
 </sc-if>
@@ -684,7 +719,7 @@ button:disabled{cursor:default}
 
 <!-- Chat layer: a page (classic) or a modal sheet (split); never inside the tab bar -->
 <sc-if value="{{isChat}}" hint-placeholder-val="{{false}}">
-<div class="chat-host {{chatHostCls}}" role="{{chatRole}}" aria-label="Assistant" style="border-top-left-radius: 32px; border-top-right-radius: 32px; background-color: #F5F5F7">
+<div class="chat-host {{chatHostCls}}" role="{{chatRole}}" aria-label="Assistant" style="border-top-left-radius: 32px; border-top-right-radius: 32px; background-color: #F7F7F9">
 <sc-if value="{{chatIsModal}}" hint-placeholder-val="{{false}}">
 <div class="nav-bg sheet-nav-bg" aria-hidden="true"><span class="nav-blur"></span><span class="nav-blur b2"></span></div>
 <header class="navbar internal in-sheet" ref="{{sheetBarRef}}">
@@ -692,7 +727,7 @@ button:disabled{cursor:default}
 <span class="nav-title sheet-title" aria-label="{{sheetTitle}}"><span class="st-text {{sheetTitleCls.chat}}" aria-hidden="true">Chat</span><span class="st-text {{sheetTitleCls.history}}" aria-hidden="true">Recent Chats</span></span>
 <span class="nav-spacer slot-space" aria-hidden="true"></span>
 <button class="nav-circle glass nav-slot slot-l" aria-label="{{sheetLeftLabel}}" onClick="{{sheetLeftAction}}"><span class="slot-icon {{sheetIcon.close}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></span><span class="slot-icon {{sheetIcon.back}}"><svg class="back-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></span></button>
-<button class="nav-circle glass nav-slot slot-r {{sheetRightCls}}" aria-label="Recent chats" aria-hidden="{{sheetRightHidden}}" tabindex="{{sheetRightTab}}" onClick="{{openHistory}}"><span class="slot-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4.5 9h15M4.5 15h10"></path></svg></span></button>
+<button class="nav-circle glass nav-slot slot-r {{sheetRightCls}}" aria-label="Recent chats" aria-hidden="{{sheetRightHidden}}" tabindex="{{sheetRightTab}}" onClick="{{openHistory}}"><span class="slot-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4.5 7.91h15M9.5 16.09h10"></path></svg></span></button>
 </header>
 </sc-if>
 <div class="sheet-stage" ref="{{sheetStageRef}}">
@@ -754,7 +789,7 @@ button:disabled{cursor:default}
 
 <sc-if value="{{menuCard}}" hint-placeholder-val="{{false}}">
 <button class="scrim-clear" aria-label="Close menu" onClick="{{closeMenu}}"></button>
-<div class="menu" role="menu" style="top: 107px; right: var(--page-inset)">
+<div class="menu {{menuCls}}" role="menu" style="top: 107px; right: var(--page-inset)">
 <button class="menu-item" role="menuitem" onClick="{{closeMenu}}">Refresh</button>
 <button class="menu-item" role="menuitem" onClick="{{disconnect}}">Disconnect</button>
 </div>
@@ -1016,16 +1051,30 @@ class Component extends DCLogic {
     }
   }
 
-  componentWillUnmount() { clearTimeout(this.botTimer); clearInterval(this.aiTicker); }
+  componentWillUnmount() { clearTimeout(this.botTimer); clearTimeout(this.menuTimer); clearInterval(this.aiTicker); }
 
-  accounts() {
-    return [
-      { id: 'a1', name: 'Oauth account 1', type: 'card', balance: '2002.90 EUR', cur: 'EUR' },
-      { id: 'a2', name: 'Oauth account 2', type: 'account', balance: '2017.24 USD', cur: 'USD' },
-      { id: 'a3', name: 'Oauth BTC account 3', type: 'account', balance: '0.02 BTC', cur: 'BTC' },
-      { id: 'a4', name: '5325 **** **** 1285', type: 'credit_card', balance: '-2017.24 USD', cur: 'USD' }
-    ];
+  accounts(bankId) {
+    // Per-bank mock accounts and cards (natural variation: 1-3 accounts, 0-2 cards)
+    const A = (id, name, balance, cur) => ({ id, name, type: 'account', balance, cur });
+    const C = (id, name, balance, cur) => ({ id, name, type: 'credit_card', balance, cur });
+    const byBank = {
+      rb1: [A('a1', 'Oauth account 1', '2002.90 EUR', 'EUR'), A('a2', 'Oauth account 2', '2017.24 USD', 'USD'), A('a3', 'Oauth BTC account 3', '0.02 BTC', 'BTC'), C('a4', '5325 **** **** 1285', '-2017.24 USD', 'USD')],
+      bofa: [A('bofa-a1', 'Oauth account 1', '8420.15 USD', 'USD'), A('bofa-a2', 'Oauth account 2', '1310.40 EUR', 'EUR'), C('bofa-c1', '4147 **** **** 0932', '-642.18 USD', 'USD')],
+      ent: [A('ent-a1', 'Oauth account 1', '3275.60 USD', 'USD')],
+      independent: [A('independent-a1', 'Oauth account 1', '12480.00 USD', 'USD'), C('independent-c1', '5412 **** **** 7719', '-1204.55 USD', 'USD'), C('independent-c2', '4833 **** **** 2046', '-89.90 USD', 'USD')],
+      mechanics: [A('mechanics-a1', 'Oauth account 1', '5610.72 USD', 'USD'), A('mechanics-a2', 'Oauth account 2', '940.00 EUR', 'EUR'), A('mechanics-a3', 'Oauth BTC account 3', '0.15 BTC', 'BTC')],
+      nearside: [A('nearside-a1', 'Oauth account 1', '27950.33 USD', 'USD'), C('nearside-c1', '4400 **** **** 5813', '-3120.47 USD', 'USD')],
+      one: [A('one-a1', 'Oauth account 1', '742.19 USD', 'USD'), A('one-a2', 'Oauth BTC account 2', '0.004 BTC', 'BTC'), C('one-c1', '5199 **** **** 3307', '-58.20 USD', 'USD'), C('one-c2', '4024 **** **** 8861', '-410.00 USD', 'USD')],
+      origin: [A('origin-a1', 'Oauth account 1', '6604.81 USD', 'USD'), A('origin-a2', 'Oauth account 2', '2250.00 EUR', 'EUR')],
+      tricounties: [A('tricounties-a1', 'Oauth account 1', '1893.44 EUR', 'EUR'), C('tricounties-c1', '5230 **** **** 6674', '-276.12 EUR', 'EUR')]
+    };
+    return byBank[bankId] || byBank.rb1;
   }
+  accountsLabel(bankId) {
+    const n = this.accounts(bankId).filter((a) => a.type !== 'credit_card').length;
+    return n + (n === 1 ? ' account' : ' accounts');
+  }
+
 
   // Placeholder transactions: 3 date groups (3, 5 and 2 rows). Amounts in the account currency
   txnsFor(acc) {
@@ -1042,6 +1091,23 @@ class Component extends DCLogic {
       ['2026-09-10', 'Reddit', 'Payment received · 16:48', 880.00, false, 'assets/images/merchants/reddit.png'],
       ['2026-09-10', 'GitLab', 'Subscription · 09:30', -29.00, false, 'assets/images/merchants/gitlab.png']
     ];
+    // Every account except Raiffeisen's first gets its own selection: a fixed (seeded) shuffle of the same transactions,
+    // 5-10 of them over 1-3 dates, pending ones first (most recent). Amounts, titles and logos are the existing ones.
+    let list = rows;
+    if (acc.id !== 'a1') {
+      let seed = 7;
+      for (let i = 0; i < acc.id.length; i++) seed = (seed * 31 + acc.id.charCodeAt(i)) >>> 0;
+      const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+      const pool = rows.slice();
+      for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); const t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
+      const n = 5 + Math.floor(rnd() * (pool.length - 4));
+      const picked = pool.slice(0, n).sort((a, b) => (b[4] ? 1 : 0) - (a[4] ? 1 : 0));
+      const groups = 1 + Math.floor(rnd() * 3);
+      const dates = []; let day = 12;
+      for (let g = 0; g < groups; g++) { dates.push('2026-09-' + this.pad(day)); day -= 1 + Math.floor(rnd() * 2); }
+      const size = Math.ceil(picked.length / groups);
+      list = picked.map((r, i) => [dates[Math.min(groups - 1, Math.floor(i / size))]].concat(r.slice(1)));
+    }
     const btc = acc.cur === 'BTC';
     const fmt = (v) => {
       const a = Math.abs(btc ? v * 0.000016 : v);
@@ -1049,7 +1115,7 @@ class Component extends DCLogic {
       const sym = { EUR: '€', USD: '$', GBP: '£', UAH: '₴', BTC: '₿' }[acc.cur] || (acc.cur + ' ');
       return (v < 0 ? '−' : '+') + sym + n;
     };
-    return rows.map((r, i) => ({ id: acc.id + '-t' + i, date: r[0], title: r[1], sub: r[2], value: r[3], amount: fmt(r[3]), neg: r[3] < 0, pending: r[4], logo: r[5] }));
+    return list.map((r, i) => ({ id: acc.id + '-t' + i, date: r[0], title: r[1], sub: r[2], value: r[3], amount: fmt(r[3]), neg: r[3] < 0, pending: r[4], logo: r[5] }));
   }
 
   // Empty-state icons: the same paths as the tab bar icons (10×10 viewBox)
@@ -1210,7 +1276,7 @@ class Component extends DCLogic {
     const TODAY = '2026-09-24';
     const st = this.state;
     const btnMode = st.aiState === 'thinking' ? 'stop' : st.aiState === 'processing' ? 'spin' : (st.draft || '').length > 0 ? 'send' : 'voice';
-    const accs = this.accounts();
+    const accs = this.accounts(st.bankId);
     const acc = accs.find((a) => a.id === st.accountId) || accs[0];
     // Mock banks: Raiffeisen (mark on the brand-yellow circle) + full circular badge logos (badge: no yellow behind).
     // color: the Bank Details header, taken from each logo file (dominant logo colour; Origin: its left segment)
@@ -1394,8 +1460,8 @@ class Component extends DCLogic {
       isBank: inConn && st.connView === 'bank',
       isSelect: inConn && st.connView === 'select',
       showBankList: inConn && st.connView === 'root' && hasBanks,
-      connectedBanks: ids.map((id) => { const b = bankById(id); return { key: id, name: b.name, logo: b.logo, logoAlt: b.name + ' logo', avatarCls: b.badge ? 'badge' : '', open: () => this.navigate('app', 'fwd', () => this.setState({ connView: 'bank', bankId: id })) }; }),
-      bankChoices: BANKS.map((b) => { const on = draft.indexOf(b.id) !== -1; const saved = ids.indexOf(b.id) !== -1; return { key: b.id, name: b.name, logo: b.logo, avatarCls: b.badge ? 'badge' : '', connected: on, pressed: on ? 'true' : 'false', status: saved ? 'Connected' : '2 accounts', checkCls: on ? 'on' : '', toggle: () => toggleBank(b.id) }; }),
+      connectedBanks: ids.map((id) => { const b = bankById(id); return { key: id, name: b.name, sub: this.accountsLabel(id), logo: b.logo, logoAlt: b.name + ' logo', avatarCls: b.badge ? 'badge' : '', open: () => this.navigate('app', 'fwd', () => this.setState({ connView: 'bank', bankId: id })) }; }),
+      bankChoices: BANKS.map((b) => { const on = draft.indexOf(b.id) !== -1; const saved = ids.indexOf(b.id) !== -1; return { key: b.id, name: b.name, logo: b.logo, avatarCls: b.badge ? 'badge' : '', connected: on, pressed: on ? 'true' : 'false', status: saved ? 'Connected' : this.accountsLabel(b.id), checkCls: on ? 'on' : '', toggle: () => toggleBank(b.id) }; }),
       openSelect,
       showEmpty: !!em,
       emptyD1: emptyKey ? this.emptyIconPaths()[emptyKey][0] : '',
@@ -1431,11 +1497,19 @@ class Component extends DCLogic {
       accounts: accs.map((a) => Object.assign({}, a, { sub: a.balance, open: () => this.navigate('app', 'fwd', () => this.setState({ connView: 'account', accountId: a.id, search: '', pendingOnly: false, range: null })) })),
       // Bank Details: currency accounts with their flag/coin icons, and cards separately; subtitle = balance only
       accountItems: accs.filter((a) => a.type !== 'credit_card').map((a) => ({ key: a.id, name: a.name, sub: a.balance, icon: 'image', iconSrc: { EUR: 'assets/images/currency-eur.svg', USD: 'assets/images/currency-usd.svg', BTC: 'assets/images/currency-btc.svg' }[a.cur] || '', open: () => this.navigate('app', 'fwd', () => this.setState({ connView: 'account', accountId: a.id, search: '', pendingOnly: false, range: null })) })),
-      cardItems: accs.filter((a) => a.type === 'credit_card').map((a) => ({ key: a.id, name: a.name, sub: a.balance, icon: 'account', iconSrc: '', open: () => this.navigate('app', 'fwd', () => this.setState({ connView: 'account', accountId: a.id, search: '', pendingOnly: false, range: null })) })),
+      hasCards: accs.some((a) => a.type === 'credit_card'),
+      cardItems: accs.filter((a) => a.type === 'credit_card').map((a) => ({ key: a.id, name: a.name, sub: a.balance, icon: 'card', iconSrc: '', badgeSrc: { EUR: 'assets/images/currency-eur.svg', USD: 'assets/images/currency-usd.svg', BTC: 'assets/images/currency-btc.svg' }[a.cur] || '', open: () => this.navigate('app', 'fwd', () => this.setState({ connView: 'account', accountId: a.id, search: '', pendingOnly: false, range: null })) })),
 
       menuCard: st.menu === 'card',
-      openCardMenu: () => this.setState({ menu: 'card' }),
-      closeMenu: () => this.setState({ menu: null }),
+      menuCls: st.menuClosing ? 'closing' : '',
+      openCardMenu: () => { clearTimeout(this.menuTimer); this.setState({ menu: 'card', menuClosing: false }); },
+      // the popover stays mounted while it folds back, then unmounts
+      closeMenu: () => {
+        if (!this.state.menu || this.state.menuClosing) return;
+        this.setState({ menuClosing: true });
+        clearTimeout(this.menuTimer);
+        this.menuTimer = setTimeout(() => this.setState({ menu: null, menuClosing: false }), 190);
+      },
       disconnect: () => this.navigate('app', 'back', () => this.setState({ menu: null, connView: 'root', connectedIds: this.state.connectedIds.filter((x) => x !== this.state.bankId) })),
 
       search: st.search,
