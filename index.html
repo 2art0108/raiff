@@ -100,17 +100,30 @@ html.dc-standalone .tx-page{padding-bottom:calc(48px + var(--dc-db))}
   // Uniform scale below 430px wide (never above 1), so the UI keeps its 430px coordinate system undistorted.
   // Browser: fixed 430×932 frame. Installed Web App: the frame fills the visible screen height, which shrinks
   // while the native keyboard is open (window.visualViewport); no keyboard height is assumed anywhere.
+  // iOS (installed Web App) can report the viewport shorter than the screen it actually draws on (the bottom area is
+  // left out of innerHeight / visualViewport). The missing height is measured while no keyboard is open and added back,
+  // so the app always reaches the real bottom of the screen, and the top of the real keyboard when it is open.
+  var lostH = 0;
+  function screenLength() {
+    var a = screen.width, b = screen.height;
+    return window.innerWidth <= window.innerHeight ? Math.max(a, b) : Math.min(a, b);
+  }
   function fit() {
     var s = Math.min(1, html.clientWidth / W);
     var fullH = html.clientHeight;
-    var visH = standalone ? (vv ? vv.height : window.innerHeight) : H * s;
+    var kbUp = !!vv && fullH - vv.height > 120;
+    if (standalone && !kbUp) {
+      var gap = screenLength() - window.innerHeight;
+      lostH = gap > 0 && gap < 120 ? gap : 0;
+    }
+    var visH = standalone ? Math.min((vv ? vv.height : window.innerHeight) + lostH, screenLength()) : H * s;
     var frameH = standalone ? visH / s : H;
     var scrollers = standalone ? Array.prototype.slice.call(document.querySelectorAll('.chat-scroll')) : [];
     var fromBottom = scrollers.map(function (el) { return el.scrollHeight - el.scrollTop - el.clientHeight; });
     html.style.setProperty('--dc-scale', String(s));
     if (standalone) {
       html.style.setProperty('--dc-frame-h', frameH + 'px');
-      html.classList.toggle('dc-kb', !!vv && fullH - vv.height > 120);
+      html.classList.toggle('dc-kb', kbUp);
       // keep the app pinned to the visible area even if iOS pans the viewport towards the focused input
       page.style.transform = vv && vv.offsetTop ? 'translateY(' + vv.offsetTop + 'px)' : '';
       if (window.scrollY) window.scrollTo(0, 0);
