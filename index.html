@@ -73,9 +73,11 @@ html.dc-standalone.dc-kb .composer-row,html.dc-standalone.dc-kb .composer-row.in
 html.dc-standalone .dc-page{position:fixed;top:0;left:0;right:0}
 /* iOS 26+ fills the status bar area of a Home Screen web app from the colour of an opaque fixed element at the page's
    top edge (otherwise a flat page-colour / frosted band). This layer gives it exactly the colour of what the prototype
-   shows there, so the screen continues behind the status bar without a seam. Only the status bar area; no UI moves. */
+   shows there, so the screen continues behind the status bar without a seam. Only the status bar area; no UI moves.
+   It sits behind the app (z-index -1) so content moving up under the status bar is never covered; the status bar
+   colour itself comes from the html/body background (see statusBarColour). */
 .dc-topedge{display:none}
-html.dc-standalone .dc-topedge{display:block;position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top, 0px);z-index:2147483000;pointer-events:none;background:var(--dc-top-color, #F7F7F9)}
+html.dc-standalone .dc-topedge{display:block;position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top, 0px);z-index:-1;pointer-events:none;background:var(--dc-top-color, #F7F7F9)}
 html.dc-standalone .history-list{padding-bottom:calc(48px + var(--dc-db))}
 html.dc-standalone .tx-page{padding-bottom:calc(48px + var(--dc-db))}
 </style>
@@ -136,7 +138,13 @@ html.dc-standalone .tx-page{padding-bottom:calc(48px + var(--dc-db))}
       fit();
     }, 150);
   }
-  function onViewport() { if (standalone && searchActive()) settledFit(); else fit(); }
+  function pinToViewport() {
+    page.style.transform = vv && vv.offsetTop ? 'translateY(' + vv.offsetTop + 'px)' : '';
+    if (window.scrollY) window.scrollTo(0, 0);
+  }
+  function onViewport() {
+    if (standalone && searchActive()) { pinToViewport(); settledFit(); } else fit();
+  }
   function holdForSearch() { searchHoldUntil = performance.now() + 400; settledFit(); }
   fit();
   window.addEventListener('resize', onViewport);
@@ -145,7 +153,7 @@ html.dc-standalone .tx-page{padding-bottom:calc(48px + var(--dc-db))}
   if (standalone) nativeKeyboard();
   if (standalone) statusBarColour();
 
-  // Installed Web App: colour of the screen right under the status bar -> top-edge layer + theme-color
+  // Installed Web App: colour of the screen right under the status bar -> html/body background, top-edge layer, theme-color
   function statusBarColour() {
     var root = document.getElementById('dc-root');
     var meta = document.querySelector('meta[name="theme-color"]');
@@ -170,6 +178,10 @@ html.dc-standalone .tx-page{padding-bottom:calc(48px + var(--dc-db))}
       if (hex === last) return;
       last = hex;
       html.style.setProperty('--dc-top-color', hex);
+      // with black-translucent, iOS fills the status bar area from the page (body) background colour, so html/body
+      // carry the same colour; the app frame covers the whole screen, so this background is never visible elsewhere
+      html.style.backgroundColor = hex;
+      document.body.style.backgroundColor = hex;
       if (meta) meta.setAttribute('content', hex);
     }
     // follow changes for a moment (screen pushes, dim fade), then settle

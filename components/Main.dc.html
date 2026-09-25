@@ -463,13 +463,21 @@ button:disabled{cursor:default}
    Every element is the same before, during and after the move; nothing changes when it ends. */
 .search-layer .field{flex:1;min-width:0;height:44px;border-radius:22px;padding:0 14px;gap:0;pointer-events:auto;will-change:transform;background:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;clip-path:inset(0 52px 0 0 round 22px);transition:transform .28s cubic-bezier(.25,.9,.3,1)}
 .search-layer .field::before,.search-layer .field::after{right:52px;transition:opacity .28s cubic-bezier(.25,.9,.3,1);opacity:0}
-.search-layer.on .field{background:transparent;box-shadow:none;-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness))}
+.search-layer.on .field{background:transparent;box-shadow:none}
+/* the glass blur starts once the field has arrived: a moving backdrop blur is re-rendered on every frame on iOS; over the
+   near-uniform nav background at the final position it looks the same. The caret shows once the row has stopped (iOS
+   draws it outside the moving layer). */
+.search-layer.settled .field{-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness))}
+.search-layer .field input{caret-color:transparent}
+.search-layer.settled .field input{caret-color:auto}
 .search-layer.on .field::before,.search-layer.on .field::after{opacity:1}
 .search-layer .field > .sf-bg{position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;transition:opacity .28s cubic-bezier(.25,.9,.3,1)}
 .search-layer .field > .sf-tint{background:var(--glass-tint);opacity:0}
 .search-layer.on .field > .sf-tint{opacity:1}
-.search-layer .sf-solid{position:absolute;left:0;top:0;width:100%;height:44px;border-radius:22px;background:#E7E8E9;opacity:1;scale:1 1;transform-origin:0 50%;pointer-events:none;will-change:transform,opacity;transition:transform .28s cubic-bezier(.25,.9,.3,1),scale .28s cubic-bezier(.25,.9,.3,1),opacity .28s cubic-bezier(.25,.9,.3,1)}
-.search-layer.on .sf-solid{opacity:0;scale:.869347 1}
+.search-layer .sf-solid{position:absolute;left:0;top:0;width:100%;height:44px;opacity:1;pointer-events:none;will-change:transform,opacity;transition:transform .28s cubic-bezier(.25,.9,.3,1),opacity .28s cubic-bezier(.25,.9,.3,1)}
+.search-layer.on .sf-solid{opacity:0}
+.search-layer .sf-solid-fill{position:absolute;inset:0;border-radius:22px;background:#E7E8E9;transform-origin:0 50%;will-change:transform;transition:transform .28s cubic-bezier(.25,.9,.3,1)}
+.search-layer.on .sf-solid-fill{transform:scaleX(.869347)}
 .search-layer .sf-shadow{position:absolute;left:0;top:0;width:calc(100% - 52px);height:44px;border-radius:22px;box-shadow:var(--glass-shadow);opacity:0;pointer-events:none;will-change:transform,opacity;transition:transform .28s cubic-bezier(.25,.9,.3,1),opacity .28s cubic-bezier(.25,.9,.3,1)}
 .search-layer.on .sf-shadow{opacity:1}
 .search-layer .field > .sf-row{flex:1;min-width:0;display:flex;align-items:center;gap:6px;margin-right:52px;will-change:transform;transform:translateX(146px);transition:transform .28s cubic-bezier(.25,.9,.3,1)}
@@ -486,7 +494,7 @@ button:disabled{cursor:default}
 .tx-page{transition:transform .28s cubic-bezier(.25,.9,.3,1)}
 .tx-page.search-up{transform:translateY(-59px)}
 .kb-dock{position:absolute;left:0;right:0;bottom:0;z-index:6}
-@media (prefers-reduced-motion:reduce){.search-layer .field,.search-layer .field > .sf-bg,.search-layer .sf-solid,.search-layer .field > .sf-row,.search-layer .sf-shadow,.search-layer .search-close,.navbar.search-session,.tx-page{transition:none}}
+@media (prefers-reduced-motion:reduce){.search-layer .field,.search-layer .field > .sf-bg,.search-layer .sf-solid,.search-layer .sf-solid-fill,.search-layer .field > .sf-row,.search-layer .sf-shadow,.search-layer .search-close,.navbar.search-session,.tx-page{transition:none}}
 .filter-row{flex-shrink:0;display:flex;align-items:center;gap:8px;margin-top:14px}
 .chip{height:36px;border:0;border-radius:100px;background:#E7E8E9;color:var(--rbi-black);display:inline-flex;align-items:center;gap:8px;padding:0 14px 0 11px;font-size:15px;font-weight:500;letter-spacing:.1px;-webkit-tap-highlight-color:transparent}
 
@@ -684,7 +692,7 @@ button:disabled{cursor:default}
 <sc-if value="{{searchOpen}}" hint-placeholder-val="{{false}}">
 <div class="search-layer {{searchLayerCls}}">
 <span class="sf-shadow" aria-hidden="true" style="transform: translateY({{searchFieldY}}px)"></span>
-<span class="sf-solid" aria-hidden="true" style="transform: translateY({{searchFieldY}}px)"></span>
+<span class="sf-solid" aria-hidden="true" style="transform: translateY({{searchFieldY}}px)"><span class="sf-solid-fill"></span></span>
 <label class="field glass" style="transform: translateY({{searchFieldY}}px)"><span class="sf-bg sf-tint" aria-hidden="true"></span><span class="sf-row">
 <svg width="21" height="22" viewBox="0 -0.571429 24 25.142857" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5l5 5"></path></svg>
 <input type="search" aria-label="Search" placeholder="Search" autocomplete="off" inputmode="none" ref="{{searchInputRef}}" value="{{search}}" onChange="{{onSearch}}" onClick="{{openSearchKb}}">
@@ -1051,7 +1059,7 @@ class Component extends DCLogic {
     }
   }
 
-  componentWillUnmount() { clearTimeout(this.botTimer); clearTimeout(this.menuTimer); clearInterval(this.aiTicker); }
+  componentWillUnmount() { clearTimeout(this.botTimer); clearTimeout(this.menuTimer); clearTimeout(this.searchSettleTimer); clearInterval(this.aiTicker); }
 
   accounts(bankId) {
     // Per-bank mock accounts and cards (natural variation: 1-3 accounts, 0-2 cards)
@@ -1515,7 +1523,7 @@ class Component extends DCLogic {
       search: st.search,
       onSearch: (e) => this.setState({ search: e.target.value }),
       searchOpen: isSub && st.connView === 'account' && !!st.searchOpen,
-      searchLayerCls: st.searchPhase === 'on' ? 'on' : '',
+      searchLayerCls: st.searchPhase === 'on' ? ('on' + (st.searchSettled ? ' settled' : '')) : '',
       searchFieldY: st.searchPhase === 'on' ? '0' : (st.searchFromY || 0).toFixed(2),
       navSearchCls: isSub && st.connView === 'account' && st.searchOpen ? ('search-session' + (st.searchPhase === 'on' ? ' searching' : '')) : '',
       searchBtnCls: (st.searchOpen ? 'hide ' : '') + (st.search ? 'has-q' : ''),
@@ -1533,12 +1541,18 @@ class Component extends DCLogic {
         try { const b = this._searchBtnEl.getBoundingClientRect(); const r = this._rootEl.getBoundingClientRect(); fromY = (b.top - r.top) * (430 / r.width) - 59; } catch (e) { fromY = 59; }
         this._focusSearch = true;
         clearTimeout(this.searchTimer);
-        this.setState({ searchOpen: true, searchPhase: 'from', searchFromY: fromY, kbOpen: true, kbTarget: 'search', kbNoAnim: false, kbLayout: 'abc', kbShift: null });
-        requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ searchPhase: 'on' })));
+        clearTimeout(this.searchSettleTimer);
+        this.setState({ searchOpen: true, searchPhase: 'from', searchSettled: false, searchFromY: fromY, kbOpen: true, kbTarget: 'search', kbNoAnim: false, kbLayout: 'abc', kbShift: null });
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          this.setState({ searchPhase: 'on' });
+          // the field has arrived: glass blur + caret (see .search-layer.settled)
+          this.searchSettleTimer = setTimeout(() => this.setState({ searchSettled: true }), 300);
+        }));
       },
       openSearchKb: () => { if (!this.state.kbOpen) this.setState({ kbOpen: true, kbTarget: 'search', kbLayout: 'abc', kbShift: null }); },
       closeSearch: () => {
-        this.setState({ searchPhase: 'from', kbOpen: false, search: '' });
+        clearTimeout(this.searchSettleTimer);
+        this.setState({ searchPhase: 'from', searchSettled: false, kbOpen: false, search: '' });
         clearTimeout(this.searchTimer);
         // like iOS Cancel: closing clears the query (immediately, so nothing changes after the reverse move)
         this.searchTimer = setTimeout(() => this.setState({ searchOpen: false }), 290);
